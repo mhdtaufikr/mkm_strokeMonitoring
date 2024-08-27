@@ -13,20 +13,16 @@ class Kernel extends ConsoleKernel
      * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
      * @return void
      */
+    protected $commands = [
+        Commands\FetchInventoryData::class,
+        Commands\FetchInventoryItemData::class,
+        Commands\FetchProducts::class,
+    ];
+
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
-    }
-
-    /**
-     * Register the commands for the application.
-     *
-     * @return void
-     */
-    protected function commands()
-    {
-        $this->load(__DIR__.'/Commands');
-
-        require base_path('routes/console.php');
+        $schedule->command('fetch:inventory')->everyTenMinutes();
+        $schedule->command('fetch:inventory-item')->everyTenMinutes();
+        $schedule->command('fetch:products')->dailyAt('00:00');
     }
 }
