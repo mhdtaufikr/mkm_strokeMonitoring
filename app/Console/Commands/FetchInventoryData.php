@@ -16,7 +16,7 @@ class FetchInventoryData extends Command
 
     public function handle()
     {
-        $apiKey = '315f9f6eb55fd6db9f87c0c0862007e0615ea467'; // Ganti dengan API key sebenarnya
+        $apiKey = '315f9f6eb55fd6db9f87c0c0862007e0615ea467'; // Replace with the actual API key
         $locationIds = [
             '5fc4b12bc329204cb00b56bf'
         ];
@@ -37,12 +37,12 @@ class FetchInventoryData extends Command
                 $data = $response->json();
                 $items = $data['collection']['data'];
 
-                // Dapatkan ID inventaris yang ada di database untuk lokasi ini
+                // Fetch existing inventory IDs in the database for this location
                 $existingInventoryIds = Inventory::where('location_id', $locationId)->pluck('_id')->toArray();
                 $fetchedInventoryIds = [];
 
                 foreach ($items as $item) {
-                    // Pastikan lokasi ada di database
+                    // Ensure location exists in the database
                     $location = MstLocation::updateOrCreate(
                         ['_id' => $item['location_id']],
                         [
@@ -56,11 +56,11 @@ class FetchInventoryData extends Command
                         ]
                     );
 
-                    // Cari inventaris berdasarkan code dan location_id
+                    // Find inventory based on code and location_id
                     $inventory = Inventory::where('code', $item['code'])->where('location_id', $item['location_id'])->first();
 
                     if ($inventory && $inventory->name == 'Auto-generated') {
-                        // Jika inventaris ditemukan dan bernama 'Auto-generated', update dengan data dari API
+                        // If inventory is found and named 'Auto-generated', update with API data
                         $inventory->update([
                             'name' => $item['name'],
                             'qty' => $item['qty'],
@@ -68,15 +68,16 @@ class FetchInventoryData extends Command
                             'location_id' => $item['location_id'],
                             'organization_id' => $item['organization_id'],
                             'updated_at' => $item['updated_at'],
-                            'created_at' => $item['created_at']
+                            'created_at' => $item['created_at'],
+                            'part_no' => $item['custom_field']['part_no'] ?? null // Save part_no
                         ]);
 
-                        // Update planned_inventory_items dengan inventory_id yang baru
+                        // Update planned_inventory_items with the new inventory_id
                         PlannedInventoryItem::where('inventory_id', $inventory->_id)->update([
                             'inventory_id' => $inventory->_id
                         ]);
                     } else {
-                        // Jika tidak ditemukan, buat entri baru di inventaris
+                        // If not found, create a new inventory entry
                         $inventory = Inventory::updateOrCreate(
                             ['_id' => $item['_id']],
                             [
@@ -87,19 +88,20 @@ class FetchInventoryData extends Command
                                 'location_id' => $item['location_id'],
                                 'organization_id' => $item['organization_id'],
                                 'updated_at' => $item['updated_at'],
-                                'created_at' => $item['created_at']
+                                'created_at' => $item['created_at'],
+                                'part_no' => $item['custom_field']['part_no'] ?? null // Save part_no
                             ]
                         );
                     }
 
-                    // Tambahkan ID inventaris yang berhasil diambil ke array
+                    // Add the fetched inventory ID to the array
                     $fetchedInventoryIds[] = $inventory->_id;
                 }
 
-                // Tentukan ID inventaris yang perlu diupdate qty menjadi 0
+                // Identify inventory IDs to update qty to 0
                 $inventoryIdsToUpdate = array_diff($existingInventoryIds, $fetchedInventoryIds);
 
-                // Update inventaris yang tidak ada di API untuk memiliki qty 0
+                // Update inventories not in the API response to have qty 0
                 Inventory::whereIn('_id', $inventoryIdsToUpdate)->update(['qty' => 0]);
             } else {
                 Log::error('Failed to fetch inventory data for location ' . $locationId, [

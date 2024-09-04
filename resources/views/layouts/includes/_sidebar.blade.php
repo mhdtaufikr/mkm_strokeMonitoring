@@ -5,15 +5,10 @@
                <!-- Sidenav Menu Heading (Home)-->
                 <div class="sidenav-menu-heading">Home</div>
                 <!-- Sidenav Accordion (Home) -->
-                <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseHome" aria-expanded="false" aria-controls="collapseHome">
-                    <div class="nav-link-icon"><i class="fas fa-home"></i></div>
-                    Home Sections
-                    <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                <a class="nav-link" href="{{ url('/home') }}">
+                    <div class="nav-link-icon"><i class="fas fa-fw fa-home"></i></div>
+                    Home
                 </a>
-                <div class="collapse" id="collapseHome" data-bs-parent="#accordionSidenav">
-                    <nav class="sidenav-menu-nested nav">
-                    </nav>
-                </div>
 
                 <!-- Sidenav Accordion (Inventory) -->
                 <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseInventory" aria-expanded="false" aria-controls="collapseInventory">

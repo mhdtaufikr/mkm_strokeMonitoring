@@ -12,11 +12,6 @@
                             Actual Production
                         </h1>
                     </div>
-                    <div class="col-auto">
-                        <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#uploadPlannedModal">
-                            <i class="fas fa-file-excel"></i> Upload Planned Received Item
-                        </button>
-                    </div>
                 </div>
             </div>
         </div>
@@ -121,8 +116,6 @@
                                                                         </li>
                                                                     </ul>
                                                                 </div>
-
-
                                                             </td>
                                                         </tr>
                                                     @endforeach
@@ -132,8 +125,6 @@
                                     </div>
                                 </div>
                             </div>
-
-
                         </div>
                     </div>
                 </div>

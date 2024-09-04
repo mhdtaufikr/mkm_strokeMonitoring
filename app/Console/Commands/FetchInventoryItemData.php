@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use App\Models\InventoryItem;
 use App\Models\Inventory;
+use App\Models\MstStrokeDies; // Ensure you include the model for MstStrokeDies
 
 class FetchInventoryItemData extends Command
 {
@@ -43,58 +44,59 @@ class FetchInventoryItemData extends Command
                     ->get()
                     ->keyBy('_id');
 
-                    foreach ($items as $item) {
-                        // Find the corresponding inventory by code and location_id
-                        $inventory = Inventory::where('code', $item['code'])->where('location_id', $locationId)->first();
+                foreach ($items as $item) {
+                    // Find the corresponding inventory by code and location_id
+                    $inventory = Inventory::where('code', $item['code'])->where('location_id', $locationId)->first();
 
-                        if ($inventory) {
-                            // Extract rack_type from the first word of rack
-                            $rackType = explode(' ', $item['rack'])[0];
+                    if ($inventory) {
+                        // Extract rack_type from the first word of rack
+                        $rackType = explode(' ', $item['rack'])[0];
 
-                            // Determine if the item exists in the current location's inventory items
-                            $existingInventoryItem = InventoryItem::where('_id', $item['_id'])
-                                ->where('inventory_id', $inventory->_id)
-                                ->first();
+                        // Determine if the item exists in the current location's inventory items
+                        $existingInventoryItem = InventoryItem::where('_id', $item['_id'])
+                            ->where('inventory_id', $inventory->_id)
+                            ->first();
 
-                            if ($existingInventoryItem) {
-                                // If it exists, update the existing record
-                                $existingInventoryItem->update([
-                                    'serial_number' => $item['serial_number'] ?? null,
-                                    'rack' => $item['rack'] ?? null,
-                                    'rack_type' => $rackType ?? null,
-                                    'qty' => $item['qty'] ?? 0,
-                                    'status' => $item['status'] ?? null,
-                                    'receiving_date' => $item['receive_date'] ?? null,
-                                    'refNumber' => $item['refNumber'] ?? null,
-                                    'is_out' => $item['is_out'] ?? false,
-                                    'vendor_name' => $this->getVendorName($item, $locationId),
-                                    'updated_at' => $item['updated_at'] ?? now(),
-                                    'created_at' => $item['created_at'] ?? now()
-                                ]);
-                            } else {
-                                // If it doesn't exist, create a new record
-                                InventoryItem::create([
-                                    '_id' => $item['_id'],
-                                    'inventory_id' => $inventory->_id,
-                                    'serial_number' => $item['serial_number'] ?? null,
-                                    'rack' => $item['rack'] ?? null,
-                                    'rack_type' => $rackType ?? null,
-                                    'qty' => $item['qty'] ?? 0,
-                                    'status' => $item['status'] ?? null,
-                                    'receiving_date' => $item['receive_date'] ?? null,
-                                    'refNumber' => $item['refNumber'] ?? null,
-                                    'is_out' => $item['is_out'] ?? false,
-                                    'vendor_name' => $this->getVendorName($item, $locationId),
-                                    'updated_at' => $item['updated_at'] ?? now(),
-                                    'created_at' => $item['created_at'] ?? now()
-                                ]);
-                            }
-
-                            Log::info('Inventory Item Processed: ', ['inventory_item' => $item['_id']]);
+                        if ($existingInventoryItem) {
+                            // If it exists, update the existing record
+                            $existingInventoryItem->update([
+                                'serial_number' => $item['serial_number'] ?? null,
+                                'rack' => $item['rack'] ?? null,
+                                'rack_type' => $rackType ?? null,
+                                'qty' => $item['qty'] ?? 0,
+                                'status' => $item['status'] ?? null,
+                                'receiving_date' => $item['receive_date'] ?? null,
+                                'refNumber' => $item['refNumber'] ?? null,
+                                'is_out' => $item['is_out'] ?? false,
+                                'vendor_name' => $this->getVendorName($item, $locationId),
+                                'updated_at' => $item['updated_at'] ?? now(),
+                                'created_at' => $item['created_at'] ?? now()
+                            ]);
+                        } else {
+                            // If it doesn't exist, create a new record
+                            InventoryItem::create([
+                                '_id' => $item['_id'],
+                                'inventory_id' => $inventory->_id,
+                                'serial_number' => $item['serial_number'] ?? null,
+                                'rack' => $item['rack'] ?? null,
+                                'rack_type' => $rackType ?? null,
+                                'qty' => $item['qty'] ?? 0,
+                                'status' => $item['status'] ?? null,
+                                'receiving_date' => $item['receive_date'] ?? null,
+                                'refNumber' => $item['refNumber'] ?? null,
+                                'is_out' => $item['is_out'] ?? false,
+                                'vendor_name' => $this->getVendorName($item, $locationId),
+                                'updated_at' => $item['updated_at'] ?? now(),
+                                'created_at' => $item['created_at'] ?? now()
+                            ]);
                         }
+
+                        // Update the current_qty in mst_strokedies based on this item's quantity
+                        $this->updateCurrentQty($item, $inventory);
+
+                        Log::info('Inventory Item Processed: ', ['inventory_item' => $item['_id']]);
                     }
-
-
+                }
 
                 // Log fetched inventory item IDs (for debugging purposes)
                 Log::info('Fetched inventory item IDs for location ' . $locationId, array_keys($existingInventoryItems->toArray()));
@@ -122,4 +124,27 @@ class FetchInventoryItemData extends Command
 
         return $vendorName;
     }
+
+    private function updateCurrentQty($item, $inventory)
+{
+    // Find all stroke die entries related to this inventory item based on part_no
+    $strokes = MstStrokeDies::where('part_no', $inventory->part_no)->get();
+
+    foreach ($strokes as $stroke) {
+        // Calculate the total accumulated quantity from inventory items for the current inventory
+        $totalInventoryQty = InventoryItem::where('inventory_id', $inventory->_id)
+            ->where('status', '!=', 'discarded') // Example status check, adjust based on your needs
+            ->sum('qty');
+
+        // Update current_qty only if the total inventory quantity is greater than the current_qty
+        if ($totalInventoryQty > $stroke->current_qty) {
+            $stroke->current_qty = $totalInventoryQty;
+            $stroke->save();
+            Log::info('Updated current_qty for stroke: ' . $stroke->id);
+        } else {
+            Log::info('No update needed for stroke: ' . $stroke->id);
+        }
+    }
+}
+
 }

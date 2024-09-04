@@ -328,7 +328,7 @@ th {
   border-width: 0;
 }
 thead{
-    background-color: rgba(0, 103, 127, 0.8);
+    background-color: rgba(90, 19, 10, 0.8);
     color: white;
 }
 
@@ -6025,7 +6025,7 @@ textarea.form-control-lg {
 .card-header {
   padding: 0.1rem 0.1rem;
   margin-bottom: 0;
-  background-color: rgba(0, 103, 127, 0.8);
+  background-color: rgba(90, 19, 10, 0.8);
   border-bottom: 1px solid rgba(33, 40, 50, 0.125);
 }
 .card-header:first-child {
@@ -6034,7 +6034,7 @@ textarea.form-control-lg {
 
 .card-footer {
   padding: 1rem 1.35rem;
-  background-color: rgba(0, 103, 127, 0.8);
+  background-color: rgba(90, 19, 10, 0.8);
   border-top: 1px solid rgba(33, 40, 50, 0.125);
 }
 .card-footer:last-child {
@@ -9099,7 +9099,7 @@ textarea.form-control-lg {
 }
 
 .border-mkm {
-    border-color: rgba(0, 103, 127, 1) !important;
+    border-color: rgba(90, 19, 10, 0.1) !important;
   }
 
 .border-black {
