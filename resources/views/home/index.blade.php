@@ -21,6 +21,34 @@
         width: 100%;
         height: 500px;
     }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+
+    th {
+        background-color: #f4f4f4;
+    }
+
+    .btn-reset {
+        background-color: #ff0000;
+        color: white;
+        padding: 5px 10px;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-reset:hover {
+        background-color: #cc0000;
+    }
 </style>
 
 <!-- Load amCharts library -->
@@ -53,10 +81,43 @@
                     <div class="card-body">
                         <!-- Chart Container -->
                         <div id="chartdiv"></div>
+
+                        <!-- Table Container -->
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Stroke Code</th>
+                                    <th>Stroke Process</th>
+                                    <th>Inventory Part No</th>
+                                    <th>Inventory Name</th>
+                                    <th>Standard Stroke</th>
+                                    <th>Total Actual Production</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($data as $item)
+                                    <tr>
+                                        <td>{{ $item->stroke_code }}</td>
+                                        <td>{{ $item->stroke_process }}</td>
+                                        <td>{{ $item->inventory_part_no }}</td>
+                                        <td>{{ $item->inventory_name }}</td>
+                                        <td>{{ $item->standard_stroke }}</td>
+                                        <td>{{ $item->total_actual_production }}</td>
+                                        <td>
+                                            @if($item->total_actual_production > $item->standard_stroke)
+                                            <form method="POST" action="{{ route('reset.qty', ['strokeId' => $item->stroke_id]) }}">
+                                                @csrf
+                                                <button type="submit" class="btn-reset">Reset</button>
+                                            </form>
+                                        @endif
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
                     </div>
-
                 </div>
-
             </div>
         </div>
         <!-- /.container-fluid -->

@@ -39,11 +39,6 @@ class FetchInventoryItemData extends Command
                 $data = $response->json();
                 $items = $data['data'];
 
-                // Fetch existing inventory items for the specific location
-                $existingInventoryItems = InventoryItem::whereIn('inventory_id', Inventory::where('location_id', $locationId)->pluck('_id'))
-                    ->get()
-                    ->keyBy('_id');
-
                 foreach ($items as $item) {
                     // Find the corresponding inventory by code and location_id
                     $inventory = Inventory::where('code', $item['code'])->where('location_id', $locationId)->first();
@@ -91,12 +86,12 @@ class FetchInventoryItemData extends Command
                             ]);
                         }
 
-                        // Update the current_qty in mst_strokedies based on this item's quantity
-                        $this->updateCurrentQty($item, $inventory);
-
                         Log::info('Inventory Item Processed: ', ['inventory_item' => $item['_id']]);
                     }
                 }
+
+                // After processing all API items, update current quantities in the stroke dies
+                $this->updateAllCurrentQtys();
 
                 // Log fetched inventory item IDs (for debugging purposes)
                 Log::info('Fetched inventory item IDs for location ' . $locationId, array_keys($existingInventoryItems->toArray()));
@@ -125,26 +120,43 @@ class FetchInventoryItemData extends Command
         return $vendorName;
     }
 
-    private function updateCurrentQty($item, $inventory)
-{
-    // Find all stroke die entries related to this inventory item based on part_no
-    $strokes = MstStrokeDies::where('part_no', $inventory->part_no)->get();
+    private function updateAllCurrentQtys()
+    {
+        // Fetch all distinct inventory IDs from inventory items
+        $inventoryIds = InventoryItem::distinct()->pluck('inventory_id');
 
-    foreach ($strokes as $stroke) {
-        // Calculate the total accumulated quantity from inventory items for the current inventory
-        $totalInventoryQty = InventoryItem::where('inventory_id', $inventory->_id)
-            ->where('status', '!=', 'discarded') // Example status check, adjust based on your needs
-            ->sum('qty');
+        foreach ($inventoryIds as $inventoryId) {
+            $inventory = Inventory::find($inventoryId);
 
-        // Update current_qty only if the total inventory quantity is greater than the current_qty
-        if ($totalInventoryQty > $stroke->current_qty) {
-            $stroke->current_qty = $totalInventoryQty;
-            $stroke->save();
-            Log::info('Updated current_qty for stroke: ' . $stroke->id);
-        } else {
-            Log::info('No update needed for stroke: ' . $stroke->id);
+            if ($inventory) {
+                $this->updateCurrentQtyForInventory($inventory);
+            }
         }
     }
-}
 
+    private function updateCurrentQtyForInventory($inventory)
+    {
+        // Find all stroke die entries related to this inventory item based on part_no
+        $strokes = MstStrokeDies::where('part_no', $inventory->part_no)->get();
+
+        foreach ($strokes as $stroke) {
+            // Calculate the total accumulated quantity from inventory items for the current inventory since the cutoff_date
+            $cutoffDate = $stroke->cutoff_date ? $stroke->cutoff_date : '1970-01-01'; // Default to epoch start if no cutoff_date is set
+
+            // Sum the quantities of inventory items with status 'good' and receiving_date greater than or equal to cutoff_date
+            $totalInventoryQty = InventoryItem::where('inventory_id', $inventory->_id)
+                ->where('status', 'good') // Only include items with 'good' status
+                ->where('receiving_date', '>=', $cutoffDate) // Filter by cutoff_date
+                ->sum('qty');
+
+            // Update current_qty only if the total inventory quantity is greater than the current_qty
+            if ($totalInventoryQty > $stroke->current_qty) {
+                $stroke->current_qty = $totalInventoryQty;
+                $stroke->save();
+                Log::info('Updated current_qty for stroke: ' . $stroke->id);
+            } else {
+                Log::info('No update needed for stroke: ' . $stroke->id);
+            }
+        }
+    }
 }

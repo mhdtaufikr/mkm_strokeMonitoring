@@ -30,6 +30,8 @@ Route::get('/logout', [AuthController::class, 'logout']);
 Route::middleware(['auth'])->group(function () {
     //Home Controller
     Route::get('/home', [HomeController::class, 'index'])->name('home');
+    Route::post('/reset-qty/{strokeId}', [HomeController::class, 'resetQty'])->name('reset.qty');
+
 
     //Dropdown Controller
      Route::get('/dropdown', [DropdownController::class, 'index'])->middleware(['checkRole:IT']);
