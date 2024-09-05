@@ -277,5 +277,15 @@
 
         }); // end am5.ready()
     </script>
+    <script>
+        function refreshPage() {
+            setTimeout(function() {
+                location.reload();
+            }, 200000); // 300000 milliseconds = 5 minutes
+        }
+
+        // Call the function when the page loads
+        refreshPage();
+    </script>
 </main>
 @endsection
