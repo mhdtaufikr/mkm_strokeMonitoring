@@ -21,6 +21,9 @@ class FetchInventoryItemData extends Command
             '5fc4b12bc329204cb00b56bf'
         ];
 
+        // Declare the variable outside of the loop
+        $existingInventoryItems = collect();
+
         foreach ($locationIds as $locationId) {
             $response = Http::withHeaders([
                 'x-api-key' => $apiKey
@@ -38,6 +41,11 @@ class FetchInventoryItemData extends Command
             if ($response->successful()) {
                 $data = $response->json();
                 $items = $data['data'];
+
+                // Fetch existing inventory items for the specific location
+                $existingInventoryItems = InventoryItem::whereIn('inventory_id', Inventory::where('location_id', $locationId)->pluck('_id'))
+                    ->get()
+                    ->keyBy('_id');
 
                 foreach ($items as $item) {
                     // Find the corresponding inventory by code and location_id
@@ -90,9 +98,6 @@ class FetchInventoryItemData extends Command
                     }
                 }
 
-                // After processing all API items, update current quantities in the stroke dies
-                $this->updateAllCurrentQtys();
-
                 // Log fetched inventory item IDs (for debugging purposes)
                 Log::info('Fetched inventory item IDs for location ' . $locationId, array_keys($existingInventoryItems->toArray()));
             } else {
@@ -101,6 +106,9 @@ class FetchInventoryItemData extends Command
                 ]);
             }
         }
+
+        // After processing all API items, update current quantities in the stroke dies
+        $this->updateAllCurrentQtys();
 
         $this->info('Inventory item data fetched and stored successfully.');
     }
