@@ -91,7 +91,7 @@
                             <div class="col-md-4">
 
                             </div>
-                            <h1>Critical Dies</h1>
+                            <h1>Critical Work Dies</h1>
                             <!-- Critical Chart -->
                             <div id="criticalChart" class="chartdiv"></div>
                             <h1>Hard Work Dies</h1>
