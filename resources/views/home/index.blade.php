@@ -17,9 +17,10 @@
         padding-bottom: 1rem;
     }
 
-    #chartdiv {
+    .chartdiv {
         width: 100%;
         height: 500px;
+        margin-bottom: 50px;
     }
 
     table {
@@ -70,6 +71,7 @@
             </div>
         </div>
     </header>
+
     <!-- Main page content-->
     <section class="content">
         <div class="container-fluid">
@@ -79,8 +81,31 @@
                         <h1 style="color: white">Stroke Monitoring</h1>
                     </div>
                     <div class="card-body">
-                        <!-- Chart Container -->
-                        <div id="chartdiv"></div>
+                        <div class="row">
+                            <div class="col-md-4">
+
+                            </div>
+                            <div class="col-md-4">
+
+                            </div>
+                            <div class="col-md-4">
+
+                            </div>
+                            <h1>Critical Dies</h1>
+                            <!-- Critical Chart -->
+                            <div id="criticalChart" class="chartdiv"></div>
+                            <h1>Hard Work Dies</h1>
+                            <!-- Hard Work Chart -->
+                            <div id="hardWorkChart" class="chartdiv"></div>
+                               <!-- Normal Chart -->
+                               <h1>Normal Work Dies</h1>
+                               <div id="normalChart" class="chartdiv"></div>
+                        </div>
+
+
+
+
+
 
                         <!-- Table Container -->
                         <table class="table table-bordered table-striped">
@@ -120,163 +145,187 @@
                 </div>
             </div>
         </div>
-        <!-- /.container-fluid -->
     </section>
+
     <script>
+        var greet;
+
         var myDate = new Date();
         var hrs = myDate.getHours();
-
-        var greet;
 
         if (hrs < 12)
             greet = 'Good Morning';
         else if (hrs >= 12 && hrs <= 17)
             greet = 'Good Afternoon';
-        else if (hrs >= 17 && hrs <= 24)
+        else
             greet = 'Good Evening';
 
         document.getElementById('lblGreetings').innerHTML =
             '<b>' + greet + '</b> and welcome to MKM Dies Smart System';
 
-        // Prepare chart data
-        var chartData = @json($data).map(function(item) {
+        // Prepare chart data for Critical, Hard Work, and Normal
+        var criticalData = @json($criticalData).map(function(item) {
             return {
                 stroke_code: item.stroke_code + ' - ' + item.stroke_process,
                 total_actual_production: item.total_actual_production,
                 standard_stroke: item.standard_stroke,
-                exceed: item.total_actual_production > item.standard_stroke // Determine if actual production exceeds the standard
+                exceed: item.total_actual_production > item.standard_stroke
             };
         });
 
-        am5.ready(function() {
+        var hardWorkData = @json($hardWorkData).map(function(item) {
+            return {
+                stroke_code: item.stroke_code + ' - ' + item.stroke_process,
+                total_actual_production: item.total_actual_production,
+                standard_stroke: item.standard_stroke,
+                exceed: item.total_actual_production > item.standard_stroke
+            };
+        });
 
-            // Create root element
-            var root = am5.Root.new("chartdiv");
+        var normalData = @json($normalData).map(function(item) {
+            return {
+                stroke_code: item.stroke_code + ' - ' + item.stroke_process,
+                total_actual_production: item.total_actual_production,
+                standard_stroke: item.standard_stroke,
+                exceed: item.total_actual_production > item.standard_stroke
+            };
+        });
 
-            // Set themes
-            root.setThemes([
-                am5themes_Animated.new(root)
-            ]);
+        function createChart(containerId, chartData) {
+            am5.ready(function() {
 
-            // Create chart
-            var chart = root.container.children.push(am5xy.XYChart.new(root, {
-                panX: false,
-                panY: false,
-                wheelX: "panX",
-                wheelY: "zoomX",
-                paddingLeft: 0,
-                layout: root.verticalLayout
-            }));
+                // Create root element
+                var root = am5.Root.new(containerId);
 
-            // Create Y-axis (Category Axis)
-            var yRenderer = am5xy.AxisRendererY.new(root, {
-                cellStartLocation: 0.1,
-                cellEndLocation: 0.9,
-                minorGridEnabled: true
-            });
-            yRenderer.grid.template.set("location", 1);
+                // Set themes
+                root.setThemes([am5themes_Animated.new(root)]);
 
-            var yAxis = chart.yAxes.push(
-                am5xy.CategoryAxis.new(root, {
-                    categoryField: "stroke_code", // Now stroke_code includes both code and process
-                    renderer: yRenderer,
-                    tooltip: am5.Tooltip.new(root, {})
-                })
-            );
-            yAxis.data.setAll(chartData);
+                // Create chart
+                var chart = root.container.children.push(am5xy.XYChart.new(root, {
+                    panX: false,
+                    panY: false,
+                    wheelX: "panX",
+                    wheelY: "zoomX",
+                    paddingLeft: 0,
+                    layout: root.verticalLayout
+                }));
 
-            // Create X-axis (Value Axis)
-            var xAxis = chart.xAxes.push(
-                am5xy.ValueAxis.new(root, {
-                    min: 0,
-                    renderer: am5xy.AxisRendererX.new(root, {
-                        strokeOpacity: 0.1,
-                        minGridDistance: 70
-                    })
-                })
-            );
-
-            // Create Column Series for Actual Production
-            var series1 = chart.series.push(am5xy.ColumnSeries.new(root, {
-                name: "Actual Production",
-                xAxis: xAxis,
-                yAxis: yAxis,
-                valueXField: "total_actual_production",
-                categoryYField: "stroke_code", // Now stroke_code includes both code and process
-                sequencedInterpolation: true,
-                tooltip: am5.Tooltip.new(root, {
-                    pointerOrientation: "horizontal",
-                    labelText: "[bold]{name}[/]\n{categoryY}: {valueX}"
-                })
-            }));
-
-            series1.columns.template.setAll({
-                height: am5.percent(70),
-                fill: am5.color(0x67b7dc) // Default color
-            });
-
-            // Change color to red if it exceeds the standard stroke
-            series1.columns.template.adapters.add("fill", function(fill, target) {
-                var dataItem = target.dataItem;
-                if (dataItem && dataItem.dataContext.exceed) {
-                    return am5.color(0xff0000); // Red color for exceeding standard
-                }
-                return fill;
-            });
-
-            // Create Line Series for Standard Stroke
-            var series2 = chart.series.push(am5xy.LineSeries.new(root, {
-                name: "Standard Stroke",
-                xAxis: xAxis,
-                yAxis: yAxis,
-                valueXField: "standard_stroke",
-                categoryYField: "stroke_code", // Now stroke_code includes both code and process
-                sequencedInterpolation: true,
-                tooltip: am5.Tooltip.new(root, {
-                    pointerOrientation: "horizontal",
-                    labelText: "[bold]{name}[/]\n{categoryY}: {valueX}"
-                })
-            }));
-
-            series2.strokes.template.setAll({
-                strokeWidth: 2,
-            });
-
-            series2.bullets.push(function () {
-                return am5.Bullet.new(root, {
-                    locationY: 0.5,
-                    sprite: am5.Circle.new(root, {
-                        radius: 5,
-                        stroke: series2.get("stroke"),
-                        strokeWidth: 2,
-                        fill: root.interfaceColors.get("background")
-                    })
+                // Create Y-axis (Category Axis)
+                var yRenderer = am5xy.AxisRendererY.new(root, {
+                    cellStartLocation: 0.1,
+                    cellEndLocation: 0.9,
+                    minorGridEnabled: true
                 });
+                yRenderer.grid.template.set("location", 1);
+
+                var yAxis = chart.yAxes.push(
+                    am5xy.CategoryAxis.new(root, {
+                        categoryField: "stroke_code", // Now stroke_code includes both code and process
+                        renderer: yRenderer,
+                        tooltip: am5.Tooltip.new(root, {})
+                    })
+                );
+                yAxis.data.setAll(chartData);
+
+                // Create X-axis (Value Axis)
+                var xAxis = chart.xAxes.push(
+                    am5xy.ValueAxis.new(root, {
+                        min: 0,
+                        renderer: am5xy.AxisRendererX.new(root, {
+                            strokeOpacity: 0.1,
+                            minGridDistance: 70
+                        })
+                    })
+                );
+
+                // Create Column Series for Actual Production
+                var series1 = chart.series.push(am5xy.ColumnSeries.new(root, {
+                    name: "Actual Production",
+                    xAxis: xAxis,
+                    yAxis: yAxis,
+                    valueXField: "total_actual_production",
+                    categoryYField: "stroke_code", // Now stroke_code includes both code and process
+                    sequencedInterpolation: true,
+                    tooltip: am5.Tooltip.new(root, {
+                        pointerOrientation: "horizontal",
+                        labelText: "[bold]{name}[/]\n{categoryY}: {valueX}"
+                    })
+                }));
+
+                series1.columns.template.setAll({
+                    height: am5.percent(70),
+                    fill: am5.color(0x67b7dc) // Default color
+                });
+
+                // Change color to red if it exceeds the standard stroke
+                series1.columns.template.adapters.add("fill", function(fill, target) {
+                    var dataItem = target.dataItem;
+                    if (dataItem && dataItem.dataContext.exceed) {
+                        return am5.color(0xff0000); // Red color for exceeding standard
+                    }
+                    return fill;
+                });
+
+                // Create Line Series for Standard Stroke
+                var series2 = chart.series.push(am5xy.LineSeries.new(root, {
+                    name: "Standard Stroke",
+                    xAxis: xAxis,
+                    yAxis: yAxis,
+                    valueXField: "standard_stroke",
+                    categoryYField: "stroke_code", // Now stroke_code includes both code and process
+                    sequencedInterpolation: true,
+                    tooltip: am5.Tooltip.new(root, {
+                        pointerOrientation: "horizontal",
+                        labelText: "[bold]{name}[/]\n{categoryY}: {valueX}"
+                    })
+                }));
+
+                series2.strokes.template.setAll({
+                    strokeWidth: 2,
+                });
+
+                series2.bullets.push(function () {
+                    return am5.Bullet.new(root, {
+                        locationY: 0.5,
+                        sprite: am5.Circle.new(root, {
+                            radius: 5,
+                            stroke: series2.get("stroke"),
+                            strokeWidth: 2,
+                            fill: root.interfaceColors.get("background")
+                        })
+                    });
+                });
+
+                // Add legend
+                var legend = chart.children.push(am5.Legend.new(root, {
+                    centerX: am5.p50,
+                    x: am5.p50
+                }));
+                legend.data.setAll(chart.series.values);
+
+                // Add cursor
+                var cursor = chart.set("cursor", am5xy.XYCursor.new(root, {
+                    behavior: "zoomY"
+                }));
+                cursor.lineX.set("visible", false);
+
+                series1.data.setAll(chartData);
+                series2.data.setAll(chartData);
+
+                // Animate on load
+                series1.appear();
+                series2.appear();
+                chart.appear(1000, 100);
+
             });
+        }
 
-            // Add legend
-            var legend = chart.children.push(am5.Legend.new(root, {
-                centerX: am5.p50,
-                x: am5.p50
-            }));
-            legend.data.setAll(chart.series.values);
-
-            // Add cursor
-            var cursor = chart.set("cursor", am5xy.XYCursor.new(root, {
-                behavior: "zoomY"
-            }));
-            cursor.lineX.set("visible", false);
-
-            series1.data.setAll(chartData);
-            series2.data.setAll(chartData);
-
-            // Animate on load
-            series1.appear();
-            series2.appear();
-            chart.appear(1000, 100);
-
-        }); // end am5.ready()
+        // Create individual charts
+        createChart("criticalChart", criticalData);
+        createChart("hardWorkChart", hardWorkData);
+        createChart("normalChart", normalData);
     </script>
+
     <script>
         function refreshPage() {
             setTimeout(function() {
