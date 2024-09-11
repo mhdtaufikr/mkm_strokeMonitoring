@@ -35,7 +35,11 @@
                      <nav class="sidenav-menu-nested nav">
                         <a class="nav-link" href="{{url('/master/product')}}">Master Product</a>
                      </nav>
+                     <nav class="sidenav-menu-nested nav">
+                        <a class="nav-link" href="{{url('/master/stroke')}}">Master Stroke</a>
+                     </nav>
                  </div>
+
                  @endif
                 @if(\Auth::user()->role === 'IT')
                 <!-- Sidenav Menu Heading (Core)-->

@@ -18,7 +18,9 @@ class MstStrokeDies extends Model
         'part_no',
         'process',
         'std_stroke',
-        'current_qty'
+        'current_qty',
+        'cutoff_date',
+        'classification'
     ];
 
     // Other model methods and properties...

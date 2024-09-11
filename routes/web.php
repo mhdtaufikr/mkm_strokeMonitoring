@@ -8,6 +8,7 @@ use App\Http\Controllers\RulesController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\StrokeController;
 
 
 
@@ -62,5 +63,15 @@ Route::middleware(['auth'])->group(function () {
 
      //Master Product
      Route::get('/master/product', [ProductController::class, 'index']);
+    // Route for displaying the Stroke Dies master page
+    Route::get('/master/stroke', [StrokeController::class, 'index'])->name('stroke.index');
+
+    // Route for fetching data for DataTables via Ajax
+    Route::get('/master/stroke-data', [StrokeController::class, 'getStrokeDiesData'])->name('stroke.dies.data');
+    Route::get('/master/stroke/{id}/edit', [StrokeController::class, 'edit']);
+    Route::put('/master/stroke/{id}', [StrokeController::class, 'update']);
+
+
+
 
     });
