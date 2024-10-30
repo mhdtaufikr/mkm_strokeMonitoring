@@ -10,6 +10,10 @@
                     Home
                 </a>
 
+                <a class="nav-link" href="{{url('/dies/list')}}">
+                    <div class="nav-link-icon"><i class="fas fa-pallet"></i></div>
+                    PM & Daily Report
+                </a>
                 <!-- Sidenav Accordion (Inventory) -->
                 <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseInventory" aria-expanded="false" aria-controls="collapseInventory">
                     <div class="nav-link-icon"><i class="fas fa-info"></i></div>

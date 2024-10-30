@@ -131,10 +131,7 @@
                                         <td>{{ $item->total_actual_production }}</td>
                                         <td>
                                             @if($item->total_actual_production > $item->standard_stroke)
-                                            <form method="POST" action="{{ route('reset.qty', ['strokeId' => $item->stroke_id]) }}">
-                                                @csrf
-                                                <button type="submit" class="btn-reset">Reset</button>
-                                            </form>
+                                            <a href="{{ route('pm', ['id' => encrypt($item->stroke_id)]) }}" class="btn-reset" role="button">Reset</a>
                                         @endif
                                         </td>
                                     </tr>

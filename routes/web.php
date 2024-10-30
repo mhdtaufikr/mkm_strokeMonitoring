@@ -9,6 +9,8 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\StrokeController;
+use App\Http\Controllers\DiesController;
+
 
 
 
@@ -72,6 +74,22 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/master/stroke/{id}', [StrokeController::class, 'update']);
 
 
+    // Dies Controller
+    Route::get('/dies/list', [DiesController::class, 'index'])->name('list');
+    Route::post('/checksheet/scan', [DiesController::class, 'checksheet'])->name('apar.check')->middleware(['checkRole:IT']);
+    Route::get('/checksheet/scan/{no_asset}', [DiesController::class, 'checksheetAsset'])
+    ->name('apar.check.noasset')
+    ->middleware(['checkRole:IT']);
+    Route::post('/checksheet/store', [DiesController::class, 'storePM'])->middleware(['checkRole:IT']);
+    Route::get('/dies/pm/{id}', [DiesController::class, 'pm'])->name('pm')->middleware(['checkRole:IT']);
+    Route::get('/dies/repair/{id}', [DiesController::class, 'repair'])->middleware(['checkRole:IT']);
+    Route::post('/dies/repair/store', [DiesController::class, 'storeRepair'])->middleware(['checkRole:IT']);
+    Route::post('/dies/add/image', [DiesController::class, 'addImage'])->middleware(['checkRole:IT']);
+    Route::post('/dies/delete/image', [DiesController::class, 'deleteImage'])->middleware(['checkRole:IT']);
+    Route::get('/pm/detail/{id}', [DiesController::class, 'pmDetail'])->name('pm')->middleware(['checkRole:IT']);
 
+
+    Route::get('apar/detail/{id}', [DiesController::class, 'detail'])->middleware(['checkRole:IT']);
+    Route::get('apar/generate-pdf/{id}', [DiesController::class, 'generatePdf'])->middleware(['checkRole:IT']);
 
     });
