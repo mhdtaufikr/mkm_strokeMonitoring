@@ -73,7 +73,7 @@
                                     <!--alert success -->
                                     <div class="text-center mb-4">
                                         <img class="img-fluid mb-4" src="{{ asset('assets/img/mms.png') }}" alt="" style="width: 50px; height: auto;">
-                                        <h1 class="text-center font-weight-bold" > <strong>DDS</strong></h1>
+                                        <h1 class="text-center font-weight-bold" > <strong>DSS</strong></h1>
                                         <small  class="text-center mb-4">MKM Dies Smart System</small>
                                     </div>
 
