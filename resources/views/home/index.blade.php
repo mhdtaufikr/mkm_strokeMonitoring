@@ -130,9 +130,9 @@
                                         <td>{{ $item->standard_stroke }}</td>
                                         <td>{{ $item->total_actual_production }}</td>
                                         <td>
-                                            @if($item->total_actual_production > $item->standard_stroke)
-                                            <a href="{{ route('pm', ['id' => encrypt($item->stroke_id)]) }}" class="btn-reset" role="button">Reset</a>
-                                        @endif
+                                            @if($item->total_actual_production >= 0.8 * $item->standard_stroke && $item->total_actual_production < $item->standard_stroke)
+                                                <a href="{{ route('pm', ['id' => encrypt($item->stroke_id)]) }}" class="btn-reset" role="button">Reset</a>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach

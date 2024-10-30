@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
@@ -11,10 +10,12 @@ class PMReminderMail extends Mailable
     use Queueable, SerializesModels;
 
     public $asset;
+    public $pmLink;
 
-    public function __construct($asset)
+    public function __construct($asset, $pmLink)
     {
         $this->asset = $asset;
+        $this->pmLink = $pmLink;
     }
 
     public function build()
@@ -23,3 +24,4 @@ class PMReminderMail extends Mailable
                     ->view('emails.pm_reminder');
     }
 }
+
