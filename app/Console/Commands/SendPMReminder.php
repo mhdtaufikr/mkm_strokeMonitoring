@@ -18,10 +18,23 @@ class SendPMReminder extends Command
     // Execute the console command
     public function handle()
     {
-        // Fetch assets where current_qty is within 20% of std_stroke
-        $assets = MstStrokeDies::whereColumn('current_qty', '>=', \DB::raw('std_stroke * 0.8'))
-                                ->whereColumn('current_qty', '<', 'std_stroke')
-                                ->get();
+        $assets = MstStrokeDies::where(function ($query) {
+            $query->where(function ($subQuery) {
+                    // 35% threshold for critical assets
+                    $subQuery->where('classification', 'Critical')
+                        ->whereRaw('(std_stroke - current_qty) / std_stroke <= 0.35')
+                        ->whereColumn('current_qty', '<', 'std_stroke');
+                })
+                ->orWhere(function ($subQuery) {
+                    // 20% threshold for non-critical assets or assets without a classification
+                    $subQuery->where('classification', '!=', 'Critical')
+                        ->orWhereNull('classification')
+                        ->whereRaw('(std_stroke - current_qty) / std_stroke <= 0.2')
+                        ->whereColumn('current_qty', '<', 'std_stroke');
+                });
+        })->get();
+
+
 
         // Loop through assets and send reminder emails
         foreach ($assets as $asset) {
