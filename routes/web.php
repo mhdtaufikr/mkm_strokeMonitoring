@@ -87,6 +87,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/dies/add/image', [DiesController::class, 'addImage'])->middleware(['checkRole:IT']);
     Route::post('/dies/delete/image', [DiesController::class, 'deleteImage'])->middleware(['checkRole:IT']);
     Route::get('/pm/detail/{id}', [DiesController::class, 'pmDetail'])->name('pm')->middleware(['checkRole:IT']);
+    Route::put('/asset/update/{id}', [DiesController::class, 'update'])->name('asset.update');
 
 
     Route::get('apar/detail/{id}', [DiesController::class, 'detail'])->middleware(['checkRole:IT']);

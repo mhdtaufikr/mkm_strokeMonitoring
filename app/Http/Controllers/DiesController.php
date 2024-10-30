@@ -297,6 +297,58 @@ public function pmDetail($id)
 }
 
 
+public function update(Request $request, $id)
+{
+    // Validate the incoming request
+    $request->validate([
+        'asset_no' => 'required|string|max:45',
+        'part_name' => 'required|string|max:45',
+        'code' => 'nullable|string|max:50',
+        'part_no' => 'nullable|string|max:255',
+        'process' => 'nullable|string|max:100',
+        'std_stroke' => 'nullable|integer',
+        'current_qty' => 'nullable|integer',
+        'cutoff_date' => 'nullable|date',
+        'classification' => 'nullable|string|max:45',
+        'status' => 'nullable|string|max:45',
+        'height' => 'nullable|numeric',
+        'width' => 'nullable|numeric',
+        'length' => 'nullable|numeric',
+        'weight' => 'nullable|numeric',
+        'remarks' => 'nullable|string',
+    ]);
+
+    // Find the asset record by ID
+    $asset = MstStrokeDies::findOrFail($id);
+
+    // Manually update each field
+    $asset->asset_no = $request->input('asset_no');
+    $asset->part_name = $request->input('part_name');
+    $asset->code = $request->input('code');
+    $asset->part_no = $request->input('part_no');
+    $asset->process = $request->input('process');
+    $asset->std_stroke = $request->input('std_stroke');
+    $asset->current_qty = $request->input('current_qty');
+    $asset->cutoff_date = $request->input('cutoff_date');
+    $asset->classification = $request->input('classification');
+    $asset->status = $request->input('status');
+    $asset->height = $request->input('height');
+    $asset->width = $request->input('width');
+    $asset->length = $request->input('length');
+    $asset->weight = $request->input('weight');
+    $asset->remarks = $request->input('remarks');
+
+    // Save the updated asset record
+    $asset->save();
+
+    // Get the `no_asset` value for redirection
+    $no_asset = $asset->asset_no;
+
+    // Redirect to the `apar.check.noasset` route with `no_asset` parameter
+    return redirect()->route('apar.check.noasset', ['no_asset' => $no_asset])
+                     ->with('status', 'Data updated successfully.');
+}
+
 
 
 }

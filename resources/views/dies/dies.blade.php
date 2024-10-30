@@ -123,6 +123,100 @@
                                             </table>
                                         </div>
                                     </div>
+                                    <!-- Edit Button to Trigger Modal -->
+                                    <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal">
+                                        <i class="fas fa-edit"></i> Edit Data
+                                    </button>
+                                    <!-- Edit Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Edit Asset Data</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ route('asset.update', $data['id']) }}" method="POST">
+                @csrf
+                @method('PUT')
+                <div class="modal-body">
+                    <div class="row">
+                        <!-- Left Column -->
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="asset_no" class="form-label">Asset No</label>
+                                <input type="text" class="form-control" id="asset_no" name="asset_no" value="{{ $data['asset_no'] }}" >
+                            </div>
+                            <div class="mb-3">
+                                <label for="part_name" class="form-label">Part Name</label>
+                                <input type="text" class="form-control" id="part_name" name="part_name" value="{{ $data['part_name'] }}" >
+                            </div>
+                            <div class="mb-3">
+                                <label for="code" class="form-label">Code</label>
+                                <input type="text" class="form-control" id="code" name="code" value="{{ $data['code'] }}" >
+                            </div>
+                            <div class="mb-3">
+                                <label for="part_no" class="form-label">Part No</label>
+                                <input type="text" class="form-control" id="part_no" name="part_no" value="{{ $data['part_no'] }}" >
+                            </div>
+                            <div class="mb-3">
+                                <label for="process" class="form-label">Process</label>
+                                <input type="text" class="form-control" id="process" name="process" value="{{ $data['process'] }}" >
+                            </div>
+                            <div class="mb-3">
+                                <label for="std_stroke" class="form-label">Standard Stroke</label>
+                                <input type="number" class="form-control" id="std_stroke" name="std_stroke" value="{{ $data['std_stroke'] }}" >
+                            </div>
+                            <div class="mb-3">
+                                <label for="current_qty" class="form-label">Current Quantity</label>
+                                <input type="number" class="form-control" id="current_qty" name="current_qty" value="{{ $data['current_qty'] }}" >
+                            </div>
+                        </div>
+
+                        <!-- Right Column -->
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="cutoff_date" class="form-label">Cutoff Date</label>
+                                <input type="date" class="form-control" id="cutoff_date" name="cutoff_date" value="{{ $data['cutoff_date'] }}" >
+                            </div>
+                            <div class="mb-3">
+                                <label for="classification" class="form-label">Classification</label>
+                                <input type="text" class="form-control" id="classification" name="classification" value="{{ $data['classification'] }}" >
+                            </div>
+                            <div class="mb-3">
+                                <label for="status" class="form-label">Status</label>
+                                <input type="text" class="form-control" id="status" name="status" value="{{ $data['status'] }}" >
+                            </div>
+                            <div class="mb-3">
+                                <label for="height" class="form-label">Height</label>
+                                <input type="number" class="form-control" id="height" name="height" value="{{ $data['height'] }}" >
+                            </div>
+                            <div class="mb-3">
+                                <label for="width" class="form-label">Width</label>
+                                <input type="number" class="form-control" id="width" name="width" value="{{ $data['width'] }}" >
+                            </div>
+                            <div class="mb-3">
+                                <label for="length" class="form-label">Length</label>
+                                <input type="number" class="form-control" id="length" name="length" value="{{ $data['length'] }}" >
+                            </div>
+                            <div class="mb-3">
+                                <label for="weight" class="form-label">Weight</label>
+                                <input type="number" class="form-control" id="weight" name="weight" value="{{ $data['weight'] }}" >
+                            </div>
+                            <div class="mb-3">
+                                <label for="remarks" class="form-label">Remarks</label>
+                                <textarea class="form-control" id="remarks" name="remarks" rows="3">{{ $data['remarks'] }}</textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
                                 </div>
                             </div>
 

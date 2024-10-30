@@ -267,6 +267,7 @@
                 var series2 = chart.series.push(am5xy.LineSeries.new(root, {
                     name: "Standard Stroke",
                     xAxis: xAxis,
+                    stroke: am5.color(0xff0000),
                     yAxis: yAxis,
                     valueXField: "standard_stroke",
                     categoryYField: "stroke_code", // Now stroke_code includes both code and process
