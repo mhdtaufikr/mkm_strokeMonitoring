@@ -57,7 +57,9 @@ class DiesController extends Controller
         $dieComponent = Dropdown::where('category','DIE COMPONENT')->get();
         $dieTools = Dropdown::where('category','DIE TOOLS')->get();
         $dieCast = Dropdown::where('category','DIE CASTING & PLATE')->get();
-        return view('dies.pm',compact('dieComponent','dieTools','dieCast','id'));
+        $dieAsc = Dropdown::where('category','DIE ASSOSERIES')->get();
+
+        return view('dies.pm',compact('dieComponent','dieTools','dieCast','id','dieAsc'));
     }
 
     public function repair($id){

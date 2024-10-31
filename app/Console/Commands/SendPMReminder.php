@@ -20,19 +20,20 @@ class SendPMReminder extends Command
     {
         $assets = MstStrokeDies::where(function ($query) {
             $query->where(function ($subQuery) {
-                    // 35% threshold for critical assets
-                    $subQuery->where('classification', 'Critical')
-                        ->whereRaw('(std_stroke - current_qty) / std_stroke <= 0.35')
-                        ->whereColumn('current_qty', '<', 'std_stroke');
-                })
-                ->orWhere(function ($subQuery) {
-                    // 20% threshold for non-critical assets or assets without a classification
-                    $subQuery->where('classification', '!=', 'Critical')
-                        ->orWhereNull('classification')
-                        ->whereRaw('(std_stroke - current_qty) / std_stroke <= 0.2')
-                        ->whereColumn('current_qty', '<', 'std_stroke');
-                });
+                // 35% untuk Critical
+                $subQuery->where('classification', 'Critical')
+                         ->whereRaw('(std_stroke - current_qty) / std_stroke <= 0.35')
+                         ->whereColumn('current_qty', '<', 'std_stroke');
+            })
+            ->orWhere(function ($subQuery) {
+                // 20% untuk Non-Critical
+                $subQuery->where('classification', '!=', 'Critical')
+                         ->orWhereNull('classification')
+                         ->whereRaw('(std_stroke - current_qty) / std_stroke <= 0.2')
+                         ->whereColumn('current_qty', '<', 'std_stroke');
+            });
         })->get();
+
 
 
 
@@ -53,7 +54,7 @@ class SendPMReminder extends Command
 
             try {
                 Mail::send('emails.pm_reminder', $emailData, function ($message) use ($asset) {
-                    $message->to('muhammad.taufik@ptmkm.co.id')
+                    $message->to('prasetyo@ptmkm.co.id')
                             ->subject("PM Reminder for Asset: {$asset->asset_no}");
                 });
 
