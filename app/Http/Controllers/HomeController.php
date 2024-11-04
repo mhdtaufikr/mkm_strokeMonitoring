@@ -75,7 +75,8 @@ class HomeController extends Controller
         'inventory_name',
         'standard_stroke',
         'total_actual_production',
-        'classification'
+        'classification',
+        'reminder_stroke'
     )
     ->where('standard_stroke', '!=', 0) // Exclude records where standard_stroke is 0
     ->orderByRaw('total_actual_production > standard_stroke DESC') // Order by records that exceed standard stroke first

@@ -131,14 +131,15 @@
                                         <td>{{ $item->total_actual_production }}</td>
                                         <td>
                                             @php
-                                                $remainingPercentage = ($item->standard_stroke - $item->total_actual_production) / $item->standard_stroke;
-                                                $threshold = ($item->classification === 'Critical') ? 0.35 : 0.2;
+                                                $difference = $item->standard_stroke - $item->total_actual_production;
                                             @endphp
 
-                                            @if($remainingPercentage <= $threshold && $item->total_actual_production < $item->standard_stroke)
-                                                <a href="{{ route('pm', ['id' => encrypt($item->stroke_id)]) }}" class="btn-reset" role="button">Reset</a>
+                                            @if($difference < $item->reminder_stroke)
+                                            <a href="{{ route('pm', ['id' => encrypt($item->stroke_id)]) }}" class="btn-reset" role="button">Reset</a>
                                             @endif
+
                                         </td>
+
 
                                     </tr>
                                 @endforeach
