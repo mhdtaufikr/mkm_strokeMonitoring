@@ -19,23 +19,8 @@ class SendPMReminder extends Command
     public function handle()
     {
         $assets = MstStrokeDies::where(function ($query) {
-            $query->where(function ($subQuery) {
-                // 35% untuk Critical
-                $subQuery->where('classification', 'Critical')
-                         ->whereRaw('(std_stroke - current_qty) / std_stroke <= 0.35')
-                         ->whereColumn('current_qty', '<', 'std_stroke');
-            })
-            ->orWhere(function ($subQuery) {
-                // 20% untuk Non-Critical
-                $subQuery->where('classification', '!=', 'Critical')
-                         ->orWhereNull('classification')
-                         ->whereRaw('(std_stroke - current_qty) / std_stroke <= 0.2')
-                         ->whereColumn('current_qty', '<', 'std_stroke');
-            });
+            $query->whereRaw('std_stroke - current_qty < reminder_stroke');
         })->get();
-
-
-
 
         // Loop through assets and send reminder emails
         foreach ($assets as $asset) {
