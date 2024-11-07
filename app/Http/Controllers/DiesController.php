@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\PmFormHead;
+use App\Models\BomDie;
 use App\Models\PmFormDetail;
 use App\Models\MstStrokeDies;
 use App\Models\Dropdown;
@@ -37,6 +38,23 @@ class DiesController extends Controller
         return redirect()->route('apar.check.noasset', ['no_asset' => $machine]);
     }
 
+    public function storeBom(Request $request)
+    {
+        $idDies = $request->id_dies;
+        $items = $request->input('items');
+
+        // Loop through each item and save it to the `bom_dies` table
+        foreach ($items as $item) {
+            BomDie::create([
+                'id_dies' => $idDies,
+                'name' => $item['name'],
+                'size' => $item['size'],
+                'qty' => $item['qty']
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'BOM items added successfully.');
+    }
 
 
     public function checksheetAsset($no_asset)
@@ -45,14 +63,14 @@ class DiesController extends Controller
         $data = MstStrokeDies::where('asset_no', $no_asset)->first();
         $pm = PmFormHead::where('dies_id', $data->id)->orderBy('date', 'desc')->get();
         $repair = Repair::where('id_dies', $data->id)->orderBy('date', 'desc')->get();
-
+        $bom = BomDie::where('id_dies',$data->id)->get();
         if (!$data) {
             // Redirect back if the asset is not found
             return redirect()->back()->with('failed', 'APAR information not found.');
         }
 
         // Return the view with the retrieved data
-        return view('dies.dies', compact('data','pm','repair'));
+        return view('dies.dies', compact('data','pm','repair','bom'));
     }
 
 
@@ -163,8 +181,6 @@ public function storeRepair(Request $request)
         'end_time' => 'required',
         'status' => 'required|string|max:45',
         'signature' => 'required|string',
-        'img_before' => 'nullable|image|mimes:jpeg,png,jpg,gif',
-        'img_after' => 'nullable|image|mimes:jpeg,png,jpg,gif',
     ]);
 
     try {

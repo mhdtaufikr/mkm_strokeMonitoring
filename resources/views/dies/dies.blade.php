@@ -20,10 +20,114 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="d-flex justify-content-between mt-4">
-                                <!-- Buttons for Preventive Maintenance and Repair -->
+                                <!-- Buttons for Preventive Maintenance, Repair, and BOM Die -->
                                 <a href="{{ url('dies/pm/' . encrypt($data->id)) }}" class="btn btn-primary">Preventive Maintenance</a>
+                                <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#bomModal">
+                                    BOM Die
+                                </button>
                                 <a href="{{ url('dies/repair/' . encrypt($data->id)) }}" class="btn btn-secondary">Repair</a>
                             </div>
+                            <!-- BOM Die Modal -->
+                          <!-- Modal for Adding BOM Die Entries -->
+<!-- BOM Die Modal -->
+<div class="modal fade" id="bomModal" tabindex="-1" aria-labelledby="bomModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="bomModalLabel">BOM Die Information</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                @if($bom->isEmpty())
+                    <p>No BOM Die data available.</p>
+                @else
+                    <table id="tableBomDie" class="table table-bordered mt-3 mb-3">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Size</th>
+                                <th>Quantity</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($bom as $item)
+                                <tr>
+                                    <td>{{ $item->name }}</td>
+                                    <td>{{ $item->size }}</td>
+                                    <td>{{ $item->qty }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                @endif
+
+                <!-- Form to Add New BOM Data -->
+                <form id="bomForm" action="{{ route('bom.store') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="id_dies" value="{{ $data->id }}">
+
+                    <div id="bomItems">
+                        <div class="row mb-2">
+                            <div class="col">
+                                <input type="text" name="items[0][name]" class="form-control" placeholder="Name" required>
+                            </div>
+                            <div class="col">
+                                <input type="text" name="items[0][size]" class="form-control" placeholder="Size">
+                            </div>
+                            <div class="col">
+                                <input type="number" name="items[0][qty]" class="form-control" placeholder="Quantity" required>
+                            </div>
+                            <div class="col-auto">
+                                <button type="button" class="btn btn-danger remove-item">Remove</button>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-primary" id="addBomItem">Add Item</button>
+                    <button type="submit" class="btn btn-success">Save BOM Items</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        let itemCount = 1;
+
+        document.getElementById("addBomItem").addEventListener("click", function() {
+            const newItem = document.createElement("div");
+            newItem.classList.add("row", "mb-2");
+            newItem.innerHTML = `
+                <div class="col">
+                    <input type="text" name="items[${itemCount}][name]" class="form-control" placeholder="Name" required>
+                </div>
+                <div class="col">
+                    <input type="text" name="items[${itemCount}][size]" class="form-control" placeholder="Size">
+                </div>
+                <div class="col">
+                    <input type="number" name="items[${itemCount}][qty]" class="form-control" placeholder="Quantity" required>
+                </div>
+                <div class="col-auto">
+                    <button type="button" class="btn btn-danger remove-item">Remove</button>
+                </div>
+            `;
+            document.getElementById("bomItems").appendChild(newItem);
+            itemCount++;
+        });
+
+        document.getElementById("bomItems").addEventListener("click", function(e) {
+            if (e.target.classList.contains("remove-item")) {
+                e.target.closest(".row").remove();
+            }
+        });
+    });
+    </script>
+
+
+
 
                             <!-- Die Details Card -->
                             <div class="card mt-4 mb-4">
@@ -466,4 +570,14 @@
       });
     });
   </script>
+    <script>
+        $(document).ready(function() {
+          var table = $("#tableBomDie").DataTable({
+            "responsive": true,
+            "lengthChange": false,
+            "autoWidth": false,
+            // "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+          });
+        });
+      </script>
 @endsection

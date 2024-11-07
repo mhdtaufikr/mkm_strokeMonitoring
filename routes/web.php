@@ -10,6 +10,7 @@ use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\StrokeController;
 use App\Http\Controllers\DiesController;
+use App\Http\Controllers\MtcOrderController;
 
 
 
@@ -57,7 +58,7 @@ Route::middleware(['auth'])->group(function () {
      Route::get('/user/access/{user}', [UserController::class, 'access'])->middleware(['checkRole:IT']);
 
      Route::get('/inventory/ckd', [InventoryController::class, 'indexCKD'])->name('inventory.ckd');
-     Route::get('/inventory/raw-material', [InventoryController::class, 'index'])->name('inventory.index');;
+     Route::get('/inventory/raw-material', [InventoryController::class, 'index'])->name('inventory.index');
      Route::get('/inventory/{id}/details', [InventoryController::class, 'show'])->name('inventory.details');
      Route::post('/inventory/planned/upload', [InventoryController::class, 'uploadPlanned'])->name('inventory.planned.upload');
      Route::get('/download/excel/format/planned', [InventoryController::class, 'downloadPlannedTemplate'])->name('inventory.planned.template');
@@ -82,15 +83,26 @@ Route::middleware(['auth'])->group(function () {
     ->middleware(['checkRole:IT']);
     Route::post('/checksheet/store', [DiesController::class, 'storePM'])->middleware(['checkRole:IT']);
     Route::get('/dies/pm/{id}', [DiesController::class, 'pm'])->name('pm')->middleware(['checkRole:IT']);
-    Route::get('/dies/repair/{id}', [DiesController::class, 'repair'])->middleware(['checkRole:IT']);
+    Route::get('/dies/repair/{id}', [DiesController::class, 'repair'])->name('dies.repair')->middleware(['checkRole:IT']);
     Route::post('/dies/repair/store', [DiesController::class, 'storeRepair'])->middleware(['checkRole:IT']);
     Route::post('/dies/add/image', [DiesController::class, 'addImage'])->middleware(['checkRole:IT']);
     Route::post('/dies/delete/image', [DiesController::class, 'deleteImage'])->middleware(['checkRole:IT']);
     Route::get('/pm/detail/{id}', [DiesController::class, 'pmDetail'])->name('pmDetail')->middleware(['checkRole:IT']);
     Route::put('/asset/update/{id}', [DiesController::class, 'update'])->name('asset.update');
+    Route::post('/bom/store', [DiesController::class, 'storeBom'])->name('bom.store');
+
 
 
     Route::get('apar/detail/{id}', [DiesController::class, 'detail'])->middleware(['checkRole:IT']);
     Route::get('apar/generate-pdf/{id}', [DiesController::class, 'generatePdf'])->middleware(['checkRole:IT']);
+
+
+    /* Mtc Order */
+    Route::get('mtc/order', [MtcOrderController::class, 'index'])->middleware(['checkRole:IT']);
+    Route::get('/get-code-process', [MtcOrderController::class, 'getCodeProcess']);
+    Route::post('/mtc-orders/store', [MtcOrderController::class, 'store'])->name('mtc_orders.store');
+
+
+
 
     });
