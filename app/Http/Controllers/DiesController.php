@@ -27,12 +27,16 @@ class DiesController extends Controller
     }
     public function checksheet(Request $request)
     {
-        // For debugging: Remove in production
-        // dd($request->all());
+        // Debugging statement: Remove in production
 
-        // Redirect to `checksheetAsset` route with `mechine` parameter as `no_asset`
-        return redirect()->route('apar.check.noasset', ['no_asset' => $request->mechine]);
+
+        // Create a variable to hold either `machine` or `no_machine`
+        $machine = $request->mechine ?? $request->no_mechine;
+
+        // Redirect to `checksheetAsset` route with `machine` parameter as `no_asset`
+        return redirect()->route('apar.check.noasset', ['no_asset' => $machine]);
     }
+
 
 
     public function checksheetAsset($no_asset)
