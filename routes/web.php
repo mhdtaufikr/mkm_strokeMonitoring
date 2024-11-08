@@ -84,6 +84,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/checksheet/store', [DiesController::class, 'storePM'])->middleware(['checkRole:IT']);
     Route::get('/dies/pm/{id}', [DiesController::class, 'pm'])->name('pm')->middleware(['checkRole:IT']);
     Route::get('/dies/repair/{id}', [DiesController::class, 'repair'])->name('dies.repair')->middleware(['checkRole:IT']);
+    Route::get('/dies/repair/{id}/{order_id}', [DiesController::class, 'repairReq'])->name('dies.repair.req')->middleware(['checkRole:IT']);
     Route::post('/dies/repair/store', [DiesController::class, 'storeRepair'])->middleware(['checkRole:IT']);
     Route::post('/dies/add/image', [DiesController::class, 'addImage'])->middleware(['checkRole:IT']);
     Route::post('/dies/delete/image', [DiesController::class, 'deleteImage'])->middleware(['checkRole:IT']);

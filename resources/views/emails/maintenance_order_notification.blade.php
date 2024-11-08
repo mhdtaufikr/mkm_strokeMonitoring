@@ -36,7 +36,7 @@
                     @endif
                 </td>
                 <td>
-                    <a href="{{ route('dies.repair', encrypt($order['id_dies'])) }}" target="_blank">Request Repair</a>
+                    <a href="{{ route('dies.repair.req', ['id' => encrypt($order['id_dies']), 'order_id' => encrypt($order['order_id'])]) }}" target="_blank">Request Repair</a>
                 </td>
             </tr>
             @endforeach

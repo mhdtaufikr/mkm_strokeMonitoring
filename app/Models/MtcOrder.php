@@ -25,4 +25,9 @@ class MtcOrder extends Model
     {
         return $this->belongsTo(MstStrokedies::class, 'id_dies');
     }
+    public function repair()
+    {
+        return $this->hasOne(Repair::class, 'id_order', 'id');
+    }
+
 }

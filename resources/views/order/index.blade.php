@@ -234,6 +234,7 @@
                                                         <th>Date</th>
                                                         <th>Current Qty</th>
                                                         <th>Image</th> <!-- New Image Column -->
+                                                        <th>Status</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -259,41 +260,90 @@
                                                                 N/A
                                                             @endif
                                                         </td>
+                                                        <td>
+                                                            @if ($data->status == 1)
+                                                            <a href="#" class="badge bg-success text-decoration-none" data-bs-toggle="modal" data-bs-target="#repairDetailModal{{ $data->id }}">
+                                                                <i class="fas fa-check-circle"></i> Repaired
+                                                            </a>
+
+                                                            <!-- Repair Detail Modal -->
+                                                            <div class="modal fade" id="repairDetailModal{{ $data->id }}" tabindex="-1" aria-labelledby="repairDetailModalLabel{{ $data->id }}" aria-hidden="true">
+                                                                <div class="modal-dialog modal-lg">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+                                                                            <h5 class="modal-title" id="repairDetailModalLabel{{ $data->id }}">Repair Details</h5>
+                                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                        </div>
+                                                                        <div class="modal-body">
+                                                                            <div class="row">
+                                                                                <div class="col-md-6">
+                                                                                    <p><strong>Date:</strong> {{ $data->repair->date }}</p>
+                                                                                    <p><strong>PIC:</strong> {{ $data->repair->pic }}</p>
+                                                                                    <p><strong>Problem:</strong> {{ $data->repair->problem }}</p>
+                                                                                    <p><strong>Action:</strong> {{ $data->repair->action }}</p>
+                                                                                    <p><strong>Status:</strong> {{ $data->repair->status }}</p>
+                                                                                    <p><strong>Image After Repair:</strong><br>
+                                                                                        <img src="{{ asset($data->repair->img_after) }}" alt="After Image" width="50%">
+                                                                                    </p>
+                                                                                </div>
+                                                                                <div class="col-md-6">
+                                                                                    <p><strong>Start Time:</strong> {{ $data->repair->start_time }}</p>
+                                                                                    <p><strong>End Time:</strong> {{ $data->repair->end_time }}</p>
+                                                                                    <p><strong>Remarks:</strong> {{ $data->repair->remarks }}</p>
+                                                                                    <p><strong>Signature:</strong><br>
+                                                                                        <img src="{{ $data->repair->signature }}" alt="Signature" width="100">
+
+                                                                                    </p>
+                                                                                    <p><strong>Image Before Repair:</strong><br>
+                                                                                        <img src="{{ asset($data->repair->img_before) }}" alt="Before Image" width="50%">
+                                                                                    </p>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            @else
+                                                                <a href="{{ route('dies.repair.req', ['id' => encrypt($data->dies->id), 'order_id' => encrypt($data->id)]) }}" class="badge bg-warning text-decoration-none">
+                                                                    <i class="fas fa-exclamation-circle"></i> Pending
+                                                                </a>
+                                                            @endif
+                                                        </td>
                                                     </tr>
                                                     @endforeach
                                                 </tbody>
                                             </table>
                                         </div>
-<!-- Image Modal -->
-<div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="imageModalLabel">Full Image</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body text-center">
-                <img id="modalImage" src="" alt="Image" class="img-fluid">
-            </div>
-        </div>
-    </div>
-</div>
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const imageModal = document.getElementById('imageModal');
-        const modalImage = document.getElementById('modalImage');
+                                        <!-- Image Modal -->
+                                        <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="imageModalLabel">Full Image</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body text-center">
+                                                        <img id="modalImage" src="" alt="Image" class="img-fluid">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <script>
+                                            document.addEventListener("DOMContentLoaded", function() {
+                                                const imageModal = document.getElementById('imageModal');
+                                                const modalImage = document.getElementById('modalImage');
 
-        imageModal.addEventListener('show.bs.modal', function(event) {
-            const button = event.relatedTarget; // Button that triggered the modal
-            const imageUrl = button.getAttribute('data-image'); // Extract image URL from data-* attribute
-            modalImage.src = imageUrl; // Update the modal image src
-        });
+                                                imageModal.addEventListener('show.bs.modal', function(event) {
+                                                    const button = event.relatedTarget; // Button that triggered the modal
+                                                    const imageUrl = button.getAttribute('data-image'); // Extract image URL from data-* attribute
+                                                    modalImage.src = imageUrl; // Update the modal image src
+                                                });
 
-        imageModal.addEventListener('hidden.bs.modal', function() {
-            modalImage.src = ""; // Clear the image when the modal is closed
-        });
-    });
-    </script>
+                                                imageModal.addEventListener('hidden.bs.modal', function() {
+                                                    modalImage.src = ""; // Clear the image when the modal is closed
+                                                });
+                                            });
+                                        </script>
 
 
                                     </div>

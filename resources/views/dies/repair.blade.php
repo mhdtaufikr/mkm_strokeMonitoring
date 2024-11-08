@@ -21,7 +21,7 @@
                             <form action="{{ url('dies/repair/store') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 <input type="hidden" name="id_dies" value="{{ $id }}">
-
+                                <input type="hidden" name="id_order" value="{{ $id_req }}">
                                 <div class="card">
                                     <div class="col-sm-12">
                                         <!-- Alert success -->
@@ -72,7 +72,7 @@
                                                     <div class="col-md-6">
                                                         <div class="mb-3">
                                                             <label for="date" class="form-label">Date</label>
-                                                            <input type="date" class="form-control" id="date" name="date" required>
+                                                            <input type="date" class="form-control" id="date" name="date" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" required>
                                                         </div>
                                                     </div>
                                                 </div>

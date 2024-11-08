@@ -10,6 +10,7 @@ use App\Models\MstStrokeDies;
 use App\Models\Dropdown;
 use Illuminate\Support\Facades\DB;
 use App\Models\Repair;
+use App\Models\MtcOrder;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
@@ -86,8 +87,16 @@ class DiesController extends Controller
 
     public function repair($id){
         $id = decrypt($id);
+        $id_req = null;
         $data = MstStrokeDies::where('id', $id)->first();
-        return view('dies.repair',compact('id','data'));
+        return view('dies.repair',compact('id','data','id_req'));
+    }
+
+    public function repairReq($id,$id_req){
+        $id = decrypt($id);
+        $id_req = decrypt($id_req);
+        $data = MstStrokeDies::where('id', $id)->first();
+        return view('dies.repair',compact('id','data','id_req'));
     }
 
     public function storePM(Request $request)
@@ -162,7 +171,7 @@ class DiesController extends Controller
         Log::error('Error storing dies checklist: ' . $e->getMessage());
 
         // Redirect back with an error message
-        return redirect()->back()->withErrors(['error' => 'Failed to submit dies checklist. Please try again.']);
+        return redirect()->back()->withErrors(['failed' => 'Failed to submit dies checklist. Please try again.']);
     }
 }
 
@@ -173,6 +182,7 @@ public function storeRepair(Request $request)
     // Validate incoming request data
     $request->validate([
         'id_dies' => 'required|integer',
+        'id_order' => 'required|integer',
         'pic' => 'required|string|max:45',
         'date' => 'required|date',
         'problem' => 'required|string',
@@ -221,7 +231,11 @@ public function storeRepair(Request $request)
         $repair->signature = $request->input('signature');
         $repair->img_before = $imgBeforePath;
         $repair->img_after = $imgAfterPath;
+        $repair->id_order = $request->input('id_order'); // Add id_order to the repair record
         $repair->save();
+
+        // Update the status of the corresponding order in mtc_orders
+        MtcOrder::where('id', $request->input('id_order'))->update(['status' => '1']);
 
         // Retrieve the `no_asset` from `MstStrokeDies` based on `id_dies`
         $die = MstStrokeDies::findOrFail($request->id_dies);
@@ -239,6 +253,7 @@ public function storeRepair(Request $request)
         return redirect()->back()->withErrors(['failed' => 'Failed to save repair record. Please try again.']);
     }
 }
+
 
 
 

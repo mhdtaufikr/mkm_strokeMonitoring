@@ -11,12 +11,14 @@ use Illuminate\Support\Facades\Mail;
 class MtcOrderController extends Controller
 {
     public function index()
-    {
-        $items = MtcOrder::with('dies')->get(); // Load related dies data for each order
-        $distinctPartNames = MstStrokeDies::select('part_name')->distinct()->orderBy('part_name', 'asc')->pluck('part_name');
+{
+    $items = MtcOrder::with(['dies', 'repair'])->orderBy('created_at', 'desc')->get(); // Load related dies and repair data
+    $distinctPartNames = MstStrokeDies::select('part_name')->distinct()->orderBy('part_name', 'asc')->pluck('part_name');
 
-        return view('order.index', compact('items', 'distinctPartNames'));
-    }
+    return view('order.index', compact('items', 'distinctPartNames'));
+}
+
+
 
     public function getCodeProcess(Request $request)
 {
@@ -75,19 +77,14 @@ public function store(Request $request)
             'date' => $order['date'],
             'img' => $imgPath,
             'id_dies' => $mtcOrder->id_dies,
+            'order_id' => $mtcOrder->id,
         ];
     }
 
     // Send email notification
-    Mail::to('prasetyo@ptmkm.co.id')->send(new MaintenanceOrderNotification($ordersData));
+    Mail::to('muhammad.taufik@ptmkm.co.id')->send(new MaintenanceOrderNotification($ordersData));
 
-    return redirect()->back()->with('success', 'Maintenance orders added successfully.');
+    return redirect()->back()->with('status', 'Maintenance orders added successfully.');
 }
-
-
-
-
-
-
 
 }
