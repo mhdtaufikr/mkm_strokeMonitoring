@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 use App\Models\MstStrokeDies;
+use App\Models\MtcOrder;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class HomeController extends Controller
 {
@@ -83,8 +85,21 @@ class HomeController extends Controller
     ->orderByRaw('ABS(standard_stroke - total_actual_production) ASC') // Then order by closest to standard stroke
     ->limit(10)
     ->get();
+    $currentDate = Carbon::now()->toDateString();
+    $items = MtcOrder::with(['dies', 'repair'])
+        ->orderByRaw("
+            CASE
+                WHEN date >= ? THEN 0
+                WHEN status IS NULL THEN 1
+                ELSE 2
+            END,
+            ABS(DATEDIFF(date, ?))
+        ", [$currentDate, $currentDate])
+        ->orderBy('date', 'asc')
+        ->get();
+    $distinctPartNames = MstStrokeDies::select('part_name')->distinct()->orderBy('part_name', 'asc')->pluck('part_name');
 
-    return view('home.index', compact('criticalData', 'hardWorkData', 'normalData','data'));
+    return view('home.index', compact('criticalData', 'hardWorkData', 'normalData','data','items','distinctPartNames'));
 }
 
 

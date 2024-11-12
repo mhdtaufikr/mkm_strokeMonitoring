@@ -7,12 +7,24 @@ use App\Models\MtcOrder;
 use App\Models\MstStrokeDies;
 use App\Mail\MaintenanceOrderNotification;
 use Illuminate\Support\Facades\Mail;
+use Carbon\Carbon;
 
 class MtcOrderController extends Controller
 {
     public function index()
 {
-    $items = MtcOrder::with(['dies', 'repair'])->orderBy('created_at', 'desc')->get(); // Load related dies and repair data
+    $currentDate = Carbon::now()->toDateString();
+    $items = MtcOrder::with(['dies', 'repair'])
+        ->orderByRaw("
+            CASE
+                WHEN date >= ? THEN 0
+                WHEN status IS NULL THEN 1
+                ELSE 2
+            END,
+            ABS(DATEDIFF(date, ?))
+        ", [$currentDate, $currentDate])
+        ->orderBy('date', 'asc')
+        ->get();
     $distinctPartNames = MstStrokeDies::select('part_name')->distinct()->orderBy('part_name', 'asc')->pluck('part_name');
 
     return view('order.index', compact('items', 'distinctPartNames'));
