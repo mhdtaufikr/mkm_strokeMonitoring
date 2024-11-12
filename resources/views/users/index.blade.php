@@ -90,19 +90,9 @@
                                                     @endforeach
                                                   </select>
                                             </div>
-                                                <div class="form-group mb-2">
-                                                    <label for="">Plant</label>
-                                                    <select name="role" id="role" class="form-control">
-
-                                                        <option value="">- Please Select Plant -</option>
-                                                        @foreach ($plants as $plant)
-                                                            <option value="{{ $plant->name_value }}">{{ $plant->name_value }}</option>
-                                                        @endforeach
-                                                      </select>
-                                                    </div>
                                                     <div class="form-group mb-2">
                                                         <label for="">Type</label>
-                                                        <select name="role" id="role" class="form-control">
+                                                        <select name="type" id="type" class="form-control">
 
                                                             <option value="">- Please Select Type -</option>
                                                             @foreach ($types as $type)
@@ -126,8 +116,39 @@
                           </div>
 
 
-                          @include('partials.alert')
+
                 </div>
+                <div class="col-sm-12">
+                    <!--alert success -->
+                    @if (session('status'))
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                      <strong>{{ session('status') }}</strong>
+                      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                  @endif
+
+                  @if (session('failed'))
+                  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>{{ session('failed') }}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+                @endif
+
+                    <!--alert success -->
+                    <!--validasi form-->
+                      @if (count($errors)>0)
+                        <div class="alert alert-info alert-dismissible fade show" role="alert">
+                          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            <ul>
+                                <li><strong>Data Process Failed !</strong></li>
+                                @foreach ($errors->all() as $error)
+                                    <li><strong>{{ $error }}</strong></li>
+                                @endforeach
+                            </ul>
+                        </div>
+                      @endif
+                    <!--end validasi form-->
+                  </div>
                 <div class="table-responsive">
                 <table id="tableUser" class="table table-bordered table-striped">
                   <thead>
@@ -136,7 +157,6 @@
                         <th>Name</th>
                         <th>Email</th>
                         <th>Role</th>
-                        <th>Plant</th>
                         <th>Type</th>
                         <th>Last Login</th>
                         <th>Action</th>
@@ -152,7 +172,6 @@
                         <td>{{ $data->name }}</td>
                         <td>{{ $data->email }}</td>
                         <td>{{ $data->role }}</td>
-                        <td>{{ $data->plant }}</td>
                         <td>{{ $data->type }}</td>
                         <td>{{ date('d-m-Y H:i:s', strtotime($data->last_login)) }}</td>
                         <td>
@@ -211,15 +230,6 @@
                                                     </select>
                                                 </div>
 
-                                                <div class="form-group mb-2">
-                                                    <label for="plant">Plant</label>
-                                                    <select name="plant" id="plant" class="form-control">
-                                                        <option value="">- Please Select Plant -</option>
-                                                        @foreach ($plants as $plant)
-                                                            <option value="{{ $plant->name_value }}" {{ $data->plant == $plant->name_value ? 'selected' : '' }}>{{ $plant->name_value }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
 
                                                 <div class="form-group mb-2">
                                                     <label for="type">Type</label>

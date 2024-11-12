@@ -38,24 +38,24 @@ Route::middleware(['auth'])->group(function () {
 
 
     //Dropdown Controller
-     Route::get('/dropdown', [DropdownController::class, 'index'])->middleware(['checkRole:IT']);
-     Route::post('/dropdown/store', [DropdownController::class, 'store'])->middleware(['checkRole:IT']);
-     Route::patch('/dropdown/update/{id}', [DropdownController::class, 'update'])->middleware(['checkRole:IT']);
-     Route::delete('/dropdown/delete/{id}', [DropdownController::class, 'delete'])->middleware(['checkRole:IT']);
+     Route::get('/dropdown', [DropdownController::class, 'index']);
+     Route::post('/dropdown/store', [DropdownController::class, 'store']);
+     Route::patch('/dropdown/update/{id}', [DropdownController::class, 'update']);
+     Route::delete('/dropdown/delete/{id}', [DropdownController::class, 'delete']);
 
      //Rules Controller
-     Route::get('/rule', [RulesController::class, 'index'])->middleware(['checkRole:IT']);
-     Route::post('/rule/store', [RulesController::class, 'store'])->middleware(['checkRole:IT']);
-     Route::patch('/rule/update/{id}', [RulesController::class, 'update'])->middleware(['checkRole:IT']);
-     Route::delete('/rule/delete/{id}', [RulesController::class, 'delete'])->middleware(['checkRole:IT']);
+     Route::get('/rule', [RulesController::class, 'index']);
+     Route::post('/rule/store', [RulesController::class, 'store']);
+     Route::patch('/rule/update/{id}', [RulesController::class, 'update']);
+     Route::delete('/rule/delete/{id}', [RulesController::class, 'delete']);
 
      //User Controller
-     Route::get('/user', [UserController::class, 'index'])->middleware(['checkRole:IT']);
-     Route::post('/user/store', [UserController::class, 'store'])->middleware(['checkRole:IT']);
-     Route::post('/user/store-partner', [UserController::class, 'storePartner'])->middleware(['checkRole:IT']);
-     Route::patch('/user/update/{user}', [UserController::class, 'update'])->middleware(['checkRole:IT']);
-     Route::get('/user/revoke/{user}', [UserController::class, 'revoke'])->middleware(['checkRole:IT']);
-     Route::get('/user/access/{user}', [UserController::class, 'access'])->middleware(['checkRole:IT']);
+     Route::get('/user', [UserController::class, 'index']);
+     Route::post('/user/store', [UserController::class, 'store']);
+     Route::post('/user/store-partner', [UserController::class, 'storePartner']);
+     Route::patch('/user/update/{user}', [UserController::class, 'update']);
+     Route::get('/user/revoke/{user}', [UserController::class, 'revoke']);
+     Route::get('/user/access/{user}', [UserController::class, 'access']);
 
      Route::get('/inventory/ckd', [InventoryController::class, 'indexCKD'])->name('inventory.ckd');
      Route::get('/inventory/raw-material', [InventoryController::class, 'index'])->name('inventory.index');
@@ -77,29 +77,29 @@ Route::middleware(['auth'])->group(function () {
 
     // Dies Controller
     Route::get('/dies/list', [DiesController::class, 'index'])->name('list');
-    Route::post('/checksheet/scan', [DiesController::class, 'checksheet'])->name('apar.check')->middleware(['checkRole:IT']);
+    Route::post('/checksheet/scan', [DiesController::class, 'checksheet'])->name('apar.check');
     Route::get('/checksheet/scan/{no_asset}', [DiesController::class, 'checksheetAsset'])
     ->name('apar.check.noasset')
-    ->middleware(['checkRole:IT']);
-    Route::post('/checksheet/store', [DiesController::class, 'storePM'])->middleware(['checkRole:IT']);
-    Route::get('/dies/pm/{id}', [DiesController::class, 'pm'])->name('pm')->middleware(['checkRole:IT']);
-    Route::get('/dies/repair/{id}', [DiesController::class, 'repair'])->name('dies.repair')->middleware(['checkRole:IT']);
-    Route::get('/dies/repair/{id}/{order_id}', [DiesController::class, 'repairReq'])->name('dies.repair.req')->middleware(['checkRole:IT']);
-    Route::post('/dies/repair/store', [DiesController::class, 'storeRepair'])->middleware(['checkRole:IT']);
-    Route::post('/dies/add/image', [DiesController::class, 'addImage'])->middleware(['checkRole:IT']);
-    Route::post('/dies/delete/image', [DiesController::class, 'deleteImage'])->middleware(['checkRole:IT']);
-    Route::get('/pm/detail/{id}', [DiesController::class, 'pmDetail'])->name('pmDetail')->middleware(['checkRole:IT']);
+    ;
+    Route::post('/checksheet/store', [DiesController::class, 'storePM']);
+    Route::get('/dies/pm/{id}', [DiesController::class, 'pm'])->name('pm');
+    Route::get('/dies/repair/{id}', [DiesController::class, 'repair'])->name('dies.repair');
+    Route::get('/dies/repair/{id}/{order_id}', [DiesController::class, 'repairReq'])->name('dies.repair.req');
+    Route::post('/dies/repair/store', [DiesController::class, 'storeRepair']);
+    Route::post('/dies/add/image', [DiesController::class, 'addImage']);
+    Route::post('/dies/delete/image', [DiesController::class, 'deleteImage']);
+    Route::get('/pm/detail/{id}', [DiesController::class, 'pmDetail'])->name('pmDetail');
     Route::put('/asset/update/{id}', [DiesController::class, 'update'])->name('asset.update');
     Route::post('/bom/store', [DiesController::class, 'storeBom'])->name('bom.store');
 
 
 
-    Route::get('apar/detail/{id}', [DiesController::class, 'detail'])->middleware(['checkRole:IT']);
-    Route::get('apar/generate-pdf/{id}', [DiesController::class, 'generatePdf'])->middleware(['checkRole:IT']);
+    Route::get('apar/detail/{id}', [DiesController::class, 'detail']);
+    Route::get('apar/generate-pdf/{id}', [DiesController::class, 'generatePdf']);
 
 
     /* Mtc Order */
-    Route::get('mtc/order', [MtcOrderController::class, 'index'])->middleware(['checkRole:IT']);
+    Route::get('mtc/order', [MtcOrderController::class, 'index']);
     Route::get('/get-code-process', [MtcOrderController::class, 'getCodeProcess']);
     Route::post('/mtc-orders/store', [MtcOrderController::class, 'store'])->name('mtc_orders.store');
 

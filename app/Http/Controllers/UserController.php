@@ -16,19 +16,17 @@ class UserController extends Controller
         ->get();
         $types = Dropdown::where('category','Category')
         ->get();
-        $plants = Dropdown::where('category','Plant')
-        ->get();
-        return view('users.index',compact('user','dropdown','types','plants'));
+        return view('users.index',compact('user','dropdown','types'));
     }
 
 
     public function store(Request $request)
     {
+        dd($request->all());
         $request->validate([
             'name' => 'required',
             'email' => 'required|email|unique:users,email',
             'role' => 'required',
-            'plant' => 'required',
             'type' => 'required',
             'password' => 'required|min:6',
         ]);
@@ -37,10 +35,10 @@ class UserController extends Controller
 
         $addUser = User::create([
             'name' => $request->name,
+            'username' => $request->name,
             'email' => $request->email,
             'password' => $password,
             'role' => $request->role,
-            'plant' => $request->plant,
             'type' => $request->type,
             'last_login' => null,
             'is_active' => '1',
@@ -106,7 +104,6 @@ class UserController extends Controller
     {
         $request->validate([
             'role' => 'required',
-            'plant' => 'required',
             'type' => 'required',
         ]);
 
@@ -118,7 +115,6 @@ class UserController extends Controller
         }
 
         $user->role = $request->role;
-        $user->plant = $request->plant;
         $user->type = $request->type;
 
         if ($user->save()) {
