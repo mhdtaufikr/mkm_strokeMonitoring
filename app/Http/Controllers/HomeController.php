@@ -20,7 +20,8 @@ class HomeController extends Controller
             'inventory_part_no',
             'inventory_name',
             'standard_stroke',
-            'total_actual_production'
+            'total_actual_production',
+            'reminder_stroke'
         )
         ->where('classification', 'Critical')
         ->where('standard_stroke', '!=', 0)
@@ -38,7 +39,8 @@ class HomeController extends Controller
             'inventory_part_no',
             'inventory_name',
             'standard_stroke',
-            'total_actual_production'
+            'total_actual_production',
+            'reminder_stroke'
         )
         ->where('classification', 'Hard Work')
         ->where('standard_stroke', '!=', 0)
