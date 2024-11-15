@@ -69,24 +69,26 @@ class HomeController extends Controller
 
 
          // Fetch the top 10 records where total_actual_production exceeds standard_stroke first, then sort by closest to the standard stroke
-    $data = DB::table('view_stroke_comparison')
-    ->select(
-        'stroke_id',
-        'stroke_code',
-        'stroke_part_no',
-        'stroke_process',
-        'inventory_part_no',
-        'inventory_name',
-        'standard_stroke',
-        'total_actual_production',
-        'classification',
-        'reminder_stroke'
-    )
-    ->where('standard_stroke', '!=', 0) // Exclude records where standard_stroke is 0
-    ->orderByRaw('total_actual_production > standard_stroke DESC') // Order by records that exceed standard stroke first
-    ->orderByRaw('ABS(standard_stroke - total_actual_production) ASC') // Then order by closest to standard stroke
-    ->limit(10)
-    ->get();
+         $data = DB::table('view_stroke_comparison')
+         ->select(
+             'stroke_id',
+             'stroke_code',
+             'stroke_part_no',
+             'stroke_process',
+             'inventory_part_no',
+             'inventory_name',
+             'standard_stroke',
+             'total_actual_production',
+             'classification',
+             'reminder_stroke'
+         )
+         ->where('standard_stroke', '!=', 0) // Exclude records where standard_stroke is 0
+         ->orderByRaw('total_actual_production > standard_stroke DESC') // 1. Exceeding standard stroke first
+         ->orderByRaw('(total_actual_production > reminder_stroke AND total_actual_production <= standard_stroke) DESC') // 2. Exceeding reminder stroke but not standard stroke
+         ->orderByRaw('ABS(reminder_stroke - total_actual_production) ASC') // 3. Closest to reminder stroke if it hasn’t been exceeded
+         ->limit(10)
+         ->get();
+
     $currentDate = Carbon::now()->toDateString();
     $items = MtcOrder::with(['dies', 'repair'])
         ->orderByRaw("

@@ -350,7 +350,7 @@
                                                         $difference = $item->standard_stroke - $item->total_actual_production;
                                                     @endphp
 
-                                                    @if($difference < $item->reminder_stroke)
+                                                    @if($item->total_actual_production > $item->reminder_stroke)
                                                     <a href="{{ route('pm', ['id' => encrypt($item->stroke_id)]) }}" class="btn-reset" role="button">Reset</a>
                                                     @endif
 

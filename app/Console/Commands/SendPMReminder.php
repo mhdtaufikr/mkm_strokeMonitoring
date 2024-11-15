@@ -19,7 +19,7 @@ class SendPMReminder extends Command
     public function handle()
     {
         $assets = MstStrokeDies::where(function ($query) {
-            $query->whereRaw('std_stroke - current_qty < reminder_stroke');
+            $query->whereRaw('current_qty > reminder_stroke');
         })->get();
 
         // Loop through assets and send reminder emails
