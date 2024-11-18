@@ -17,6 +17,7 @@ class AuthController extends Controller
     {
         $usernameOrEmail = $request->input('email');
         $password = $request->input('password');
+
         // Determine if input is likely an email address
         $isEmail = filter_var($usernameOrEmail, FILTER_VALIDATE_EMAIL);
 
@@ -43,7 +44,14 @@ class AuthController extends Controller
                         'login_counter' => $user->login_counter + 1,
                     ]);
 
-                // Redirect to the intended URL or to home page
+                // Redirect based on username
+                if ($user->username === 'me') {
+                    return redirect()->intended('/dies/list');
+                } elseif ($user->username === 'so') {
+                    return redirect('/mtc/order');
+                }
+
+                // Default redirection
                 return redirect()->intended('/home');
             } else {
                 // User is not active, redirect with message
@@ -54,6 +62,7 @@ class AuthController extends Controller
             return redirect('/')->with('statusLogin', 'Wrong Username/Email or Password');
         }
     }
+
 
 
     public function logout()
