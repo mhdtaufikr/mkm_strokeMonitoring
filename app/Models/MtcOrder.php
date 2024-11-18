@@ -18,6 +18,7 @@ class MtcOrder extends Model
         'problem',
         'img',
         'date',
+        'pic',
     ];
 
     // Define the relationship with the `mst_strokedies` table

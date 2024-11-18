@@ -21,11 +21,28 @@
                         <div class="col-12">
                             <div class="d-flex justify-content-between mt-4">
                                 <!-- Buttons for Preventive Maintenance, Repair, and BOM Die -->
-                                <a href="{{ url('dies/pm/' . encrypt($data->id)) }}" class="btn btn-primary">Preventive Maintenance</a>
-                                <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#bomModal">
+                                @php
+                                    $isDisabled = auth()->user()->username == 'so'; // Check if the username is 'so'
+                                @endphp
+
+                                <a href="{{ $isDisabled ? '#' : url('dies/pm/' . encrypt($data->id)) }}"
+                                class="btn btn-primary {{ $isDisabled ? 'disabled' : '' }}"
+                                {{ $isDisabled ? 'aria-disabled=true' : '' }}>
+                                    Preventive Maintenance
+                                </a>
+
+                                <button type="button"
+                                        class="btn btn-info {{ $isDisabled ? 'disabled' : '' }}"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#bomModal"
+                                        {{ $isDisabled ? 'disabled aria-disabled=true' : '' }}>
                                     BOM Die
                                 </button>
-                                <a href="{{ url('dies/repair/' . encrypt($data->id)) }}" class="btn btn-secondary">Repair</a>
+                                <a href="{{ $isDisabled ? '#' : url('dies/repair/' . encrypt($data->id)) }}"
+                                    class="btn btn-secondary {{ $isDisabled ? 'disabled' : '' }}"
+                                    {{ $isDisabled ? 'aria-disabled=true' : '' }}>
+                                     Repair
+                                 </a>
                             </div>
                             <!-- BOM Die Modal -->
                           <!-- Modal for Adding BOM Die Entries -->
@@ -178,10 +195,13 @@
                                                 <tr><th>Current Quantity</th><td>{{ $data['current_qty'] }}</td></tr>
                                                 <tr>
                                                     <th>
-                                                        <!-- Button to trigger image modal -->
-                                                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#imageModal">
-                                                            Manage Images
-                                                        </button>
+                                                        <button type="button"
+                                                        class="btn btn-primary btn-sm {{ $isDisabled ? 'disabled' : '' }}"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#imageModal"
+                                                        {{ $isDisabled ? 'disabled aria-disabled=true' : '' }}>
+                                                    Manage Images
+                                                </button>
                                                     </th>
                                                     <td>
                                                         <!-- Bootstrap Carousel for showing images -->
@@ -228,9 +248,13 @@
                                         </div>
                                     </div>
                                     <!-- Edit Button to Trigger Modal -->
-                                    <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal">
-                                        <i class="fas fa-edit"></i> Edit Data
-                                    </button>
+                                    <button type="button"
+                                    class="btn btn-warning btn-sm {{ $isDisabled ? 'disabled' : '' }}"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#editModal"
+                                    {{ $isDisabled ? 'disabled aria-disabled=true' : '' }}>
+                                <i class="fas fa-edit"></i> Edit Data
+                            </button>
                                     <!-- Edit Modal -->
 <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -472,37 +496,37 @@
                                         </div>
                                     </div>
                                 </div>
-<!-- Repair Detail Modal -->
-<div class="modal fade" id="repairDetailModal" tabindex="-1" aria-labelledby="repairDetailModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="repairDetailModalLabel">Repair Details</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <p><strong>Date:</strong> <span id="modalDate"></span></p>
-                        <p><strong>PIC:</strong> <span id="modalPIC"></span></p>
-                        <p><strong>Problem:</strong> <span id="modalProblem"></span></p>
-                        <p><strong>Action:</strong> <span id="modalAction"></span></p>
-                        <p><strong>Status:</strong> <span id="modalStatus"></span></p>
-                        <p><strong>Image After Repair:</strong><br><img id="modalImgAfter" src="" alt="After Image" width="50%"></p>
-                    </div>
-                    <div class="col-md-6">
-                        <p><strong>Start Time:</strong> <span id="modalStartTime"></span></p>
-                        <p><strong>End Time:</strong> <span id="modalEndTime"></span></p>
-                        <p><strong>Remarks:</strong> <span id="modalRemarks"></span></p>
-                        <p><strong>Signature:</strong><br><img id="modalSignature" src="" alt="Signature" width="100"></p>
-                        <p><strong>Image Before Repair:</strong><br><img id="modalImgBefore" src="" alt="Before Image" width="50%"></p>
+                                <!-- Repair Detail Modal -->
+                                <div class="modal fade" id="repairDetailModal" tabindex="-1" aria-labelledby="repairDetailModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="repairDetailModalLabel">Repair Details</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <p><strong>Date:</strong> <span id="modalDate"></span></p>
+                                                        <p><strong>PIC:</strong> <span id="modalPIC"></span></p>
+                                                        <p><strong>Problem:</strong> <span id="modalProblem"></span></p>
+                                                        <p><strong>Action:</strong> <span id="modalAction"></span></p>
+                                                        <p><strong>Status:</strong> <span id="modalStatus"></span></p>
+                                                        <p><strong>Image After Repair:</strong><br><img id="modalImgAfter" src="" alt="After Image" width="50%"></p>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <p><strong>Start Time:</strong> <span id="modalStartTime"></span></p>
+                                                        <p><strong>End Time:</strong> <span id="modalEndTime"></span></p>
+                                                        <p><strong>Remarks:</strong> <span id="modalRemarks"></span></p>
+                                                        <p><strong>Signature:</strong><br><img id="modalSignature" src="" alt="Signature" width="100"></p>
+                                                        <p><strong>Image Before Repair:</strong><br><img id="modalImgBefore" src="" alt="Before Image" width="50%"></p>
 
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 
                             </div>
                         </div>

@@ -5,9 +5,9 @@
     <title>Preventive Maintenance Reminder</title>
 </head>
 <body>
-    <h2>PM Reminder for Asset: {{ $asset_no }}</h2>
+    <h2>PM Reminder for Dies: {{ $code }} - {{$process}}</h2>
     <p>Dear Team,</p>
-    <p>The current quantity for the asset "<strong>{{ $part_name }}</strong>" (Asset No: {{ $asset_no }})
+    <p>The current quantity for the Dies "<strong>{{ $code }} - {{$process}}</strong>" (Asset No: {{ $asset_no }})
     is approaching the standard stroke limit.</p>
 
     <p><strong>Standard Stroke:</strong> {{ $std_stroke }}<br>

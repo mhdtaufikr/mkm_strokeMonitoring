@@ -32,6 +32,7 @@ class SendPMReminder extends Command
                 'asset_no' => $asset->asset_no,
                 'part_name' => $asset->part_name,
                 'code' => $asset->code,
+                'process' => $asset->process,
                 'std_stroke' => $asset->std_stroke,
                 'current_qty' => $asset->current_qty,
                 'pmLink' => $pmLink
@@ -40,10 +41,10 @@ class SendPMReminder extends Command
             try {
                 Mail::send('emails.pm_reminder', $emailData, function ($message) use ($asset) {
                     $message->to('prasetyo@ptmkm.co.id')
-                            ->subject("PM Reminder for Asset: {$asset->asset_no}");
+                            ->subject("PM Reminder for Dies: {$asset->code} - {$asset->process}");
                 });
 
-                $this->info("Sent PM reminder for Asset No: {$asset->asset_no}");
+                $this->info("PM Reminder for Dies: {$asset->code} - {$asset->process}");
             } catch (\Exception $e) {
                 // Log the error message
                 \Log::error("Failed to send PM reminder for Asset No: {$asset->asset_no}. Error: " . $e->getMessage());

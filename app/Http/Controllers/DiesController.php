@@ -24,8 +24,10 @@ class DiesController extends Controller
         // Retrieve all machines with their op_name and location
         $item = PmFormHead::with('MstStrokeDies')->get();
         $dies = MstStrokeDies::get();
+        $pm = PmFormHead::with('MstStrokeDies')->orderBy('date', 'desc')->get();
+        $repair = Repair::orderBy('date', 'desc')->get();
 
-        return view('dies.index',compact('item','dies'));
+        return view('dies.index',compact('item','dies','pm','repair'));
     }
     public function checksheet(Request $request)
     {

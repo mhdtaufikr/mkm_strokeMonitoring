@@ -373,6 +373,7 @@
                                                 <th>Code</th>
                                                 <th>Process</th>
                                                 <th>Std Stroke</th>
+                                                <th>PIC</th>
                                                 <th>Problem</th>
                                                 <th>Date</th>
                                                 <th>Current Qty</th>
@@ -391,6 +392,7 @@
                                                 <td>{{ $data->dies->code ?? 'N/A' }}</td>
                                                 <td>{{ $data->dies->process ?? 'N/A' }}</td>
                                                 <td>{{ $data->dies->std_stroke ?? 'N/A' }}</td>
+                                                <td>{{ $data->pic }}</td>
                                                 <td>{{ $data->problem }}</td>
                                                 <td>{{ $data->date }}</td>
                                                 <td>{{ $data->dies->current_qty ?? 'N/A' }}</td>

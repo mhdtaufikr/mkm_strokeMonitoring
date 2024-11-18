@@ -91,16 +91,18 @@ class HomeController extends Controller
 
     $currentDate = Carbon::now()->toDateString();
     $items = MtcOrder::with(['dies', 'repair'])
-        ->orderByRaw("
-            CASE
-                WHEN date >= ? THEN 0
-                WHEN status IS NULL THEN 1
-                ELSE 2
-            END,
-            ABS(DATEDIFF(date, ?))
-        ", [$currentDate, $currentDate])
-        ->orderBy('date', 'asc')
-        ->get();
+    ->whereNull('status') // Select rows where status is NULL
+    ->orderByRaw("
+        CASE
+            WHEN date >= ? THEN 0
+            WHEN status IS NULL THEN 1
+            ELSE 2
+        END,
+        ABS(DATEDIFF(date, ?))
+    ", [$currentDate, $currentDate])
+    ->orderBy('date', 'asc')
+    ->get();
+
     $distinctPartNames = MstStrokeDies::select('part_name')->distinct()->orderBy('part_name', 'asc')->pluck('part_name');
 
     return view('home.index', compact('criticalData', 'hardWorkData', 'normalData','data','items','distinctPartNames'));

@@ -102,7 +102,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('mtc/order', [MtcOrderController::class, 'index']);
     Route::get('/get-code-process', [MtcOrderController::class, 'getCodeProcess']);
     Route::post('/mtc-orders/store', [MtcOrderController::class, 'store'])->name('mtc_orders.store');
-
+    Route::get('/get-process-by-code', [MtcOrderController::class, 'getProcessByCode']);
+    Route::post('/maintenance-orders/store', [MtcOrderController::class, 'storeScan'])->name('mtc_orders.store.scan');
 
 
 
