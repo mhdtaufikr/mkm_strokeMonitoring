@@ -290,7 +290,7 @@
                     </select>
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label">Date</label>
+                    <label class="form-label">Next Production</label>
                     <input type="date" name="orders[${orderIndex}][date]" class="form-control" required>
                 </div>
                 <div class="col-md-6">
