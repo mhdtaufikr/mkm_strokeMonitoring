@@ -261,7 +261,7 @@ public function addImage(Request $request)
 {
     $request->validate([
         'id' => 'required|exists:mst_strokedies,id', // Ensure die ID exists
-        'new_images.*' => 'file|mimes:jpeg,png,jpg,gif|max:2048', // Validate each image
+        'new_images.*' => 'file|mimes:jpeg,png,jpg,gif|max:10000', // Validate each image
     ]);
 
     $die = MstStrokeDies::findOrFail($request->id);
