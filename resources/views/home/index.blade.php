@@ -375,7 +375,7 @@
                                                 <th>Std Stroke</th>
                                                 <th>PIC</th>
                                                 <th>Problem</th>
-                                                <th>Date</th>
+                                                <th>Next Production</th>
                                                 <th>Current Qty</th>
                                                 <th>Image</th> <!-- New Image Column -->
                                                 <th>Status</th>

@@ -103,7 +103,7 @@
 
                                                     <div class="row g-3">
                                                         <div class="col-md-6">
-                                                            <label for="date" class="form-label">Date</label>
+                                                            <label for="date" class="form-label">Next Production</label>
                                                             <input type="date" name="date" class="form-control" required>
                                                         </div>
                                                         <div class="col-md-6">
@@ -371,7 +371,7 @@
                                                         <th>Std Stroke</th>
                                                         <th>PIC</th>
                                                         <th>Problem</th>
-                                                        <th>Date</th>
+                                                        <th>Next Production</th>
                                                         <th>Current Qty</th>
                                                         <th>Image</th> <!-- New Image Column -->
                                                         <th>Status</th>
