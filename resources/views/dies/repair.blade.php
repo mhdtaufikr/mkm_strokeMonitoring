@@ -91,19 +91,65 @@
                                                     </div>
                                                 </div>
                                                 <div class="row">
-                                                    <div class="col-md-6">
+                                                    <div class="col-md-4">
                                                         <div class="mb-3">
                                                             <label for="start_time" class="form-label">Start Time</label>
                                                             <input type="time" class="form-control" id="start_time" name="start_time" required>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-6">
+                                                    <div class="col-md-4">
                                                         <div class="mb-3">
                                                             <label for="end_time" class="form-label">End Time</label>
                                                             <input type="time" class="form-control" id="end_time" name="end_time" required>
                                                         </div>
                                                     </div>
+                                                    <div class="col-md-4">
+                                                        <div class="mb-3">
+                                                            <label for="balance" class="form-label">Balance (Hours)</label>
+                                                            <input type="text" class="form-control" id="balance" name="balance" disabled>
+                                                        </div>
+                                                    </div>
                                                 </div>
+
+                                                <script>
+                                                    document.addEventListener("DOMContentLoaded", function () {
+                                                        const startTimeInput = document.getElementById("start_time");
+                                                        const endTimeInput = document.getElementById("end_time");
+                                                        const balanceInput = document.getElementById("balance");
+
+                                                        function calculateBalance() {
+                                                            const startTime = startTimeInput.value;
+                                                            const endTime = endTimeInput.value;
+
+                                                            if (startTime && endTime) {
+                                                                const [startHour, startMinute] = startTime.split(":").map(Number);
+                                                                const [endHour, endMinute] = endTime.split(":").map(Number);
+
+                                                                // Convert time to minutes
+                                                                const startTotalMinutes = startHour * 60 + startMinute;
+                                                                const endTotalMinutes = endHour * 60 + endMinute;
+
+                                                                // Calculate difference in minutes
+                                                                let diffMinutes;
+                                                                if (endTotalMinutes >= startTotalMinutes) {
+                                                                    diffMinutes = endTotalMinutes - startTotalMinutes;
+                                                                } else {
+                                                                    // Handle midnight case
+                                                                    diffMinutes = 1440 - startTotalMinutes + endTotalMinutes;
+                                                                }
+
+                                                                // Convert minutes to hours and round to 2 decimal places
+                                                                const diffHours = (diffMinutes / 60).toFixed(2);
+
+                                                                balanceInput.value = diffHours;
+                                                            }
+                                                        }
+
+                                                        startTimeInput.addEventListener("change", calculateBalance);
+                                                        endTimeInput.addEventListener("change", calculateBalance);
+                                                    });
+                                                </script>
+
                                             </div>
 
                                             <div class="col-md-6">
