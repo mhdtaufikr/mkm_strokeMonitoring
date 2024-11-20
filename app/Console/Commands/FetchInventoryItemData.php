@@ -16,6 +16,7 @@ class FetchInventoryItemData extends Command
 
     public function handle()
     {
+        set_time_limit(300);
         $apiKey = '315f9f6eb55fd6db9f87c0c0862007e0615ea467'; // Replace with your actual API key
         $locationIds = [
             '5fc4b12bc329204cb00b56bf'

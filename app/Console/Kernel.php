@@ -22,9 +22,24 @@ class Kernel extends ConsoleKernel
 
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('fetch:inventory')->everyTenMinutes();
-        $schedule->command('fetch:inventory-item')->everyTenMinutes();
-        $schedule->command('fetch:products')->dailyAt('00:00');
-        $schedule->command('pm:send-reminder')->daily();
+        $schedule->command('fetch:inventory')
+         ->everyTenMinutes()
+         ->withoutOverlapping()
+         ->timeout(120); // 2 minutes
+
+        $schedule->command('fetch:inventory-item')
+                ->everyTenMinutes()
+                ->withoutOverlapping()
+                ->timeout(120); // 2 minutes
+
+        $schedule->command('fetch:products')
+                ->dailyAt('00:00')
+                ->timeout(300); // 5 minutes
+
+        $schedule->command('pm:send-reminder')
+                ->daily()
+                ->withoutOverlapping()
+                ->timeout(180); // 3 minutes
+
     }
 }
