@@ -1,0 +1,17 @@
+{
+    "name": "Dies SMart System 2.0",
+    "short_name": "DSS 2.0",
+    "start_url": "/",
+    "background_color": "#5a130a",
+    "description": "Dies SMart System 2.0",
+    "display": "fullscreen",
+    "theme_color": "#5a130a",
+    "icons": [
+        {
+            "src": "icon-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
+}
