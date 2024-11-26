@@ -82,7 +82,7 @@
                     </div>
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-3">
                                 <h1>Critical Work Dies</h1>
                                 <!-- Critical Chart -->
                                 <div id="criticalChart" style="width: 100%; height: 500px;"></div>
@@ -195,7 +195,7 @@
                                 </script>
 
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-5">
                                 <h1>Hard Work Dies</h1>
                                 <!-- Hard Work Chart -->
                                 <div id="hardWorkChart" style="width: 100%; height: 500px;"></div>
@@ -320,6 +320,11 @@
                                 </script>
 
 
+                            </div>
+                            <div class="col-md-4">
+                            <!-- Normal Chart -->
+                            <h1>Normal Work Dies</h1>
+                            <div id="normalChart" class="chartdiv"></div>
                             </div>
                             <div class="col-md-6">
                                 <h1>PM Dies</h1>
@@ -492,12 +497,136 @@
                             </div>
 
 
-                               <!-- Normal Chart -->
-                               {{-- <h1>Normal Work Dies</h1>
-                               <div id="normalChart" class="chartdiv"></div> --}}
+
                         </div>
 
+<script>
+    // Prepare Normal Work Chart Data
+var normalData = @json($normalData).map(function(item) {
+    return {
+        stroke_code: item.stroke_code + ' - ' + item.stroke_process,
+        total_actual_production: item.total_actual_production,
+        standard_stroke: item.standard_stroke,
+        reminder_stroke: item.reminder_stroke,
+        exceed: item.total_actual_production > item.standard_stroke,
+        reminder_exceed: item.total_actual_production > item.reminder_stroke
+    };
+});
 
+// Create Normal Work Chart
+am5.ready(function() {
+    var root = am5.Root.new("normalChart");
+    root.setThemes([am5themes_Animated.new(root)]);
+
+    var chart = root.container.children.push(am5xy.XYChart.new(root, {
+        panX: false,
+        panY: false,
+        wheelX: "panX",
+        wheelY: "zoomX",
+        paddingLeft: 50,
+        layout: root.verticalLayout
+    }));
+
+    // Y-Axis
+    var yAxis = chart.yAxes.push(am5xy.CategoryAxis.new(root, {
+        categoryField: "stroke_code",
+        renderer: am5xy.AxisRendererY.new(root, {
+            cellStartLocation: 0.1,
+            cellEndLocation: 0.9,
+            minorGridEnabled: true
+        }),
+        tooltip: am5.Tooltip.new(root, {})
+    }));
+    yAxis.data.setAll(normalData);
+
+    // X-Axis
+    var xAxis = chart.xAxes.push(am5xy.ValueAxis.new(root, {
+        min: 0,
+        renderer: am5xy.AxisRendererX.new(root, {
+            strokeOpacity: 0.1,
+            minGridDistance: 70
+        })
+    }));
+
+    // Column Series for Actual Production
+    var series1 = chart.series.push(am5xy.ColumnSeries.new(root, {
+        name: "Actual Production",
+        xAxis: xAxis,
+        yAxis: yAxis,
+        valueXField: "total_actual_production",
+        categoryYField: "stroke_code",
+        tooltip: am5.Tooltip.new(root, { labelText: "[bold]{name}[/]\n{categoryY}: {valueX}" })
+    }));
+
+    series1.columns.template.setAll({ height: am5.percent(70), fill: am5.color(0x67b7dc) });
+    series1.columns.template.adapters.add("fill", function(fill, target) {
+        var dataItem = target.dataItem;
+        if (dataItem && dataItem.dataContext.exceed) {
+            return am5.color(0xff0000); // Red if exceeding standard stroke
+        } else if (dataItem && dataItem.dataContext.reminder_exceed) {
+            return am5.color(0xffff00); // Yellow if exceeding reminder stroke
+        }
+        return fill;
+    });
+
+    // Line Series for Standard Stroke
+    var series2 = chart.series.push(am5xy.LineSeries.new(root, {
+        name: "Standard Stroke",
+        xAxis: xAxis,
+        yAxis: yAxis,
+        valueXField: "standard_stroke",
+        categoryYField: "stroke_code",
+        stroke: am5.color(0xff0000),
+        tooltip: am5.Tooltip.new(root, { labelText: "[bold]{name}[/]\n{categoryY}: {valueX}" })
+    }));
+
+    series2.strokes.template.setAll({ strokeWidth: 2 });
+    series2.bullets.push(function() {
+        return am5.Bullet.new(root, {
+            locationY: 0.5,
+            sprite: am5.Circle.new(root, {
+                radius: 5,
+                fill: root.interfaceColors.get("background"),
+                stroke: am5.color(0xff0000),
+                strokeWidth: 2
+            })
+        });
+    });
+
+    // Line Series for Reminder Stroke
+    var series3 = chart.series.push(am5xy.LineSeries.new(root, {
+        name: "Reminder Stroke",
+        xAxis: xAxis,
+        yAxis: yAxis,
+        valueXField: "reminder_stroke",
+        categoryYField: "stroke_code",
+        stroke: am5.color(0xffa500),
+        tooltip: am5.Tooltip.new(root, { labelText: "[bold]{name}[/]\n{categoryY}: {valueX}" })
+    }));
+
+    series3.strokes.template.setAll({ strokeWidth: 2 });
+    series3.bullets.push(function() {
+        return am5.Bullet.new(root, {
+            locationY: 0.5,
+            sprite: am5.Circle.new(root, {
+                radius: 5,
+                fill: root.interfaceColors.get("background"),
+                stroke: am5.color(0xffa500),
+                strokeWidth: 2
+            })
+        });
+    });
+
+    // Cursor
+    chart.set("cursor", am5xy.XYCursor.new(root, { behavior: "zoomY" }));
+
+    // Set Data
+    series1.data.setAll(normalData);
+    series2.data.setAll(normalData);
+    series3.data.setAll(normalData);
+});
+
+</script>
 
 
 

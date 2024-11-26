@@ -58,7 +58,8 @@ class HomeController extends Controller
             'inventory_part_no',
             'inventory_name',
             'standard_stroke',
-            'total_actual_production'
+            'total_actual_production',
+            'reminder_stroke'
         )
         ->where('classification', 'Normal')
         ->where('standard_stroke', '!=', 0)
