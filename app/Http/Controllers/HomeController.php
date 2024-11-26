@@ -10,25 +10,26 @@ class HomeController extends Controller
 {
     public function index()
 {
-    // Fetch the top 10 records for each classification where total_actual_production exceeds standard_stroke, then sort by closest to the standard stroke
     $criticalData = DB::table('view_stroke_comparison')
-        ->select(
-            'stroke_id',
-            'stroke_code',
-            'stroke_part_no',
-            'stroke_process',
-            'inventory_part_no',
-            'inventory_name',
-            'standard_stroke',
-            'total_actual_production',
-            'reminder_stroke'
-        )
-        ->where('classification', 'Critical')
-        ->where('standard_stroke', '!=', 0)
-        ->orderByRaw('total_actual_production > standard_stroke DESC')
-        ->orderByRaw('ABS(standard_stroke - total_actual_production) ASC')
-        ->limit(10)
-        ->get();
+    ->select(
+        'stroke_id',
+        'stroke_code',
+        'stroke_part_no',
+        'stroke_process',
+        'inventory_part_no',
+        'inventory_name',
+        'standard_stroke',
+        'total_actual_production',
+        'reminder_stroke'
+    )
+    ->where('classification', 'Critical') // Include only "Critical" classification
+    ->where('standard_stroke', '!=', 0) // Exclude records where standard_stroke is 0
+    ->where('total_actual_production', '>', 0) // Exclude records where total_actual_production is 0
+    ->orderByRaw('total_actual_production > standard_stroke DESC') // Sort by whether it exceeds standard stroke
+    ->orderByRaw('ABS(standard_stroke - total_actual_production) ASC') // Then sort by closest to standard stroke
+    ->limit(10)
+    ->get();
+
 
     $hardWorkData = DB::table('view_stroke_comparison')
         ->select(
@@ -69,26 +70,27 @@ class HomeController extends Controller
         ->get();
 
 
-         // Fetch the top 10 records where total_actual_production exceeds standard_stroke first, then sort by closest to the standard stroke
-         $data = DB::table('view_stroke_comparison')
-         ->select(
-             'stroke_id',
-             'stroke_code',
-             'stroke_part_no',
-             'stroke_process',
-             'inventory_part_no',
-             'inventory_name',
-             'standard_stroke',
-             'total_actual_production',
-             'classification',
-             'reminder_stroke'
-         )
-         ->where('standard_stroke', '!=', 0) // Exclude records where standard_stroke is 0
-         ->orderByRaw('total_actual_production > standard_stroke DESC') // 1. Exceeding standard stroke first
-         ->orderByRaw('(total_actual_production > reminder_stroke AND total_actual_production <= standard_stroke) DESC') // 2. Exceeding reminder stroke but not standard stroke
-         ->orderByRaw('ABS(reminder_stroke - total_actual_production) ASC') // 3. Closest to reminder stroke if it hasn’t been exceeded
-         ->limit(10)
-         ->get();
+        $data = DB::table('view_stroke_comparison')
+        ->select(
+            'stroke_id',
+            'stroke_code',
+            'stroke_part_no',
+            'stroke_process',
+            'inventory_part_no',
+            'inventory_name',
+            'standard_stroke',
+            'total_actual_production',
+            'classification',
+            'reminder_stroke'
+        )
+        ->where('standard_stroke', '!=', 0) // Exclude records where standard_stroke is 0
+        ->where('total_actual_production', '>', 0) // Exclude records where total_actual_production is 0
+        ->orderByRaw('ABS(total_actual_production - reminder_stroke) ASC') // 1. Closest to reminder stroke
+        ->orderByRaw('total_actual_production > standard_stroke DESC') // 2. Exceeding standard stroke comes first
+        ->orderByRaw('ABS(total_actual_production - standard_stroke) ASC') // 3. Closest to standard stroke for ties
+        ->limit(10)
+        ->get();
+
 
     $currentDate = Carbon::now()->toDateString();
     $items = MtcOrder::with(['dies', 'repair'])
