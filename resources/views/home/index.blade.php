@@ -99,6 +99,9 @@
                                         };
                                     });
 
+                                    // Sort data in descending order by total_actual_production
+                                    criticalData.sort((a, b) => b.total_actual_production - a.total_actual_production);
+
                                     // Create Critical Chart
                                     am5.ready(function() {
                                         var root = am5.Root.new("criticalChart");
@@ -165,26 +168,26 @@
                                         });
 
                                         var series3 = chart.series.push(am5xy.LineSeries.new(root, {
-                                        name: "Reminder Stroke",
-                                        xAxis: xAxis,
-                                        yAxis: yAxis,
-                                        valueXField: "reminder_stroke",
-                                        categoryYField: "stroke_code",
-                                        stroke: am5.color(0xffa500), // Orange color for Reminder Stroke line
-                                        tooltip: am5.Tooltip.new(root, { labelText: "[bold]{name}[/]\n{categoryY}: {valueX}" })
-                                    }));
-                                    series3.strokes.template.setAll({ strokeWidth: 2 });
-                                    series3.bullets.push(function() {
-                                        return am5.Bullet.new(root, {
-                                            locationY: 0.5,
-                                            sprite: am5.Circle.new(root, {
-                                                radius: 5,
-                                                fill: root.interfaceColors.get("background"),
-                                                stroke: am5.color(0xffa500), // Orange color for dots
-                                                strokeWidth: 2
-                                            })
+                                            name: "Reminder Stroke",
+                                            xAxis: xAxis,
+                                            yAxis: yAxis,
+                                            valueXField: "reminder_stroke",
+                                            categoryYField: "stroke_code",
+                                            stroke: am5.color(0xffa500), // Orange color for Reminder Stroke line
+                                            tooltip: am5.Tooltip.new(root, { labelText: "[bold]{name}[/]\n{categoryY}: {valueX}" })
+                                        }));
+                                        series3.strokes.template.setAll({ strokeWidth: 2 });
+                                        series3.bullets.push(function() {
+                                            return am5.Bullet.new(root, {
+                                                locationY: 0.5,
+                                                sprite: am5.Circle.new(root, {
+                                                    radius: 5,
+                                                    fill: root.interfaceColors.get("background"),
+                                                    stroke: am5.color(0xffa500), // Orange color for dots
+                                                    strokeWidth: 2
+                                                })
+                                            });
                                         });
-                                    });
 
 
                                         chart.set("cursor", am5xy.XYCursor.new(root, { behavior: "zoomY" }));
@@ -670,6 +673,7 @@ am5.ready(function() {
             "responsive": true,
             "lengthChange": false,
             "autoWidth": false,
+            "order": [[5, "asc"]],
         });
     });
 </script>
