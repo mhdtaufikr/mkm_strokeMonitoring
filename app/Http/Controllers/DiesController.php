@@ -181,10 +181,11 @@ class DiesController extends Controller
 
 public function storeRepair(Request $request)
 {
+
+
     // Validate incoming request data
     $request->validate([
         'id_dies' => 'required|integer',
-        'id_order' => 'required|integer',
         'pic' => 'required|string|max:45',
         'date' => 'required|date',
         'problem' => 'required|string',
@@ -193,6 +194,8 @@ public function storeRepair(Request $request)
         'end_time' => 'required',
         'status' => 'required|string|max:45',
         'signature' => 'required|string',
+        'img_before' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        'img_after' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
     ]);
 
     try {
@@ -233,11 +236,15 @@ public function storeRepair(Request $request)
         $repair->signature = $request->input('signature');
         $repair->img_before = $imgBeforePath;
         $repair->img_after = $imgAfterPath;
-        $repair->id_order = $request->input('id_order'); // Add id_order to the repair record
-        $repair->save();
 
-        // Update the status of the corresponding order in mtc_orders
-        MtcOrder::where('id', $request->input('id_order'))->update(['status' => '1']);
+        // Conditionally add `id_order` if provided
+        if ($request->filled('id_order')) {
+            $repair->id_order = $request->input('id_order');
+            // Update the status of the corresponding order in `mtc_orders`
+            MtcOrder::where('id', $request->input('id_order'))->update(['status' => '1']);
+        }
+
+        $repair->save();
 
         // Retrieve the `no_asset` from `MstStrokeDies` based on `id_dies`
         $die = MstStrokeDies::findOrFail($request->id_dies);
@@ -255,6 +262,7 @@ public function storeRepair(Request $request)
         return redirect()->back()->withErrors(['failed' => 'Failed to save repair record. Please try again.']);
     }
 }
+
 
 
 
