@@ -23,5 +23,9 @@ class MstStrokeDies extends Model
         'classification'
     ];
 
-    // Other model methods and properties...
+    public function inventory()
+    {
+        return $this->hasOne(Inventory::class, 'part_no', 'part_no');
+    }
+
 }

@@ -93,7 +93,11 @@ class HomeController extends Controller
 
 
     $currentDate = Carbon::now()->toDateString();
-    $items = MtcOrder::with(['dies', 'repair'])
+    $items = MtcOrder::with([
+        'dies',
+        'repair',
+        'dies.inventory' // Include inventory relationship based on part_no
+    ])
     ->whereNull('status') // Select rows where status is NULL
     ->orderByRaw("
         CASE
@@ -105,6 +109,7 @@ class HomeController extends Controller
     ", [$currentDate, $currentDate])
     ->orderBy('date', 'asc')
     ->get();
+
 
     $distinctPartNames = MstStrokeDies::select('part_name')->distinct()->orderBy('part_name', 'asc')->pluck('part_name');
 
