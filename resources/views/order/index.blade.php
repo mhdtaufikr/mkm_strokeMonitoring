@@ -463,17 +463,19 @@
                                                                 </a>
                                                             @endif
                                                         </td>
-                                                        <td>
+
                                                             @if(\Auth::user()->role === 'Super Admin' || \Auth::user()->role === 'IT')
-                                                                <form action="{{ route('mtc.order.destroy', $data->id) }}" method="POST" style="display:inline-block;">
+
+                                                            <td><form action="{{ route('mtc.order.destroy', $data->id) }}" method="POST" style="display:inline-block;">
                                                                     @csrf
                                                                     @method('DELETE')
                                                                     <button type="submit" class="btn btn-danger btn-sm">
                                                                         <i class="fas fa-trash-alt"></i> Delete
                                                                     </button>
                                                                 </form>
+                                                            </td>
                                                             @endif
-                                                        </td>
+
 
                                                     </tr>
                                                     @endforeach
