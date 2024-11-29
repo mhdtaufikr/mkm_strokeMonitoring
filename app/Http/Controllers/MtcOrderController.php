@@ -174,6 +174,17 @@ public function storeScan(Request $request)
     return redirect()->back()->with('status', 'Maintenance order submitted successfully.');
 }
 
+public function destroy($id)
+{
+    try {
+        $order = MtcOrder::findOrFail($id); // Find the order by ID
+        $order->delete(); // Delete the order
+
+       return redirect()->back()->with('status', 'Mtc Order deleted successfully.');
+    } catch (Exception $e) {
+       return redirect()->back()->with('Failed', 'Failed to delete Mtc Order.');
+    }
+}
 
 
 }

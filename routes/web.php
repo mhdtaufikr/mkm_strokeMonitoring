@@ -105,6 +105,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/get-process-by-code', [MtcOrderController::class, 'getProcessByCode']);
     Route::post('/maintenance-orders/store', [MtcOrderController::class, 'storeScan'])->name('mtc_orders.store.scan');
 
+    Route::delete('mtc/order/{id}', [MtcOrderController::class, 'destroy'])->name('mtc.order.destroy');
 
 
     });

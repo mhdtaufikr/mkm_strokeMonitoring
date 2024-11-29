@@ -375,6 +375,9 @@
                                                         <th>Current Qty</th>
                                                         <th>Image</th> <!-- New Image Column -->
                                                         <th>Status</th>
+                                                        @if(\Auth::user()->role === 'Super Admin' || \Auth::user()->role === 'IT')
+                                                        <th>Action</th> <!-- Conditionally shown for authorized roles -->
+                                                    @endif
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -460,6 +463,18 @@
                                                                 </a>
                                                             @endif
                                                         </td>
+                                                        <td>
+                                                            @if(\Auth::user()->role === 'Super Admin' || \Auth::user()->role === 'IT')
+                                                                <form action="{{ route('mtc.order.destroy', $data->id) }}" method="POST" style="display:inline-block;">
+                                                                    @csrf
+                                                                    @method('DELETE')
+                                                                    <button type="submit" class="btn btn-danger btn-sm">
+                                                                        <i class="fas fa-trash-alt"></i> Delete
+                                                                    </button>
+                                                                </form>
+                                                            @endif
+                                                        </td>
+
                                                     </tr>
                                                     @endforeach
                                                 </tbody>
@@ -507,6 +522,33 @@
         </div>
     </div>
 </main>
+<script>
+$(document).on('click', '.delete-order', function () {
+    const orderId = $(this).data('id');
+    if (confirm('Are you sure you want to delete this order?')) {
+        $.ajax({
+            url: `/mtc/order/${orderId}`,
+            type: 'DELETE', // Ensure this is DELETE
+            data: {
+                _token: $('meta[name="csrf-token"]').attr('content') // Include the CSRF token
+            },
+            success: function (response) {
+                if (response.success) {
+                    alert(response.message);
+                    location.reload(); // Reload the page to update the table
+                } else {
+                    alert(response.message);
+                }
+            },
+            error: function () {
+                alert('An error occurred while deleting the order.');
+            }
+        });
+    }
+});
+
+
+</script>
 <!-- For Datatables -->
 <script>
     $(document).ready(function() {
