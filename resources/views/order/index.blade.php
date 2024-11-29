@@ -176,7 +176,7 @@
                                                                 </div>
                                                                 <div class="col-md-4">
                                                                     <!-- Date Input -->
-                                                                    <label for="date" class="form-label">Date</label>
+                                                                    <label for="date" class="form-label">Next Production</label>
                                                                     <input type="date" name="orders[0][date]" class="form-control" required>
                                                                 </div>
                                                                 <div class="col-md-6">
