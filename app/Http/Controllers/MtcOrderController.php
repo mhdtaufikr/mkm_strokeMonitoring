@@ -118,7 +118,7 @@ public function store(Request $request)
 
     // Send email notification (optional)
     if (!empty($ordersData)) {
-        Mail::to('muhammad.taufik@ptmkm.co.id')->send(new MaintenanceOrderNotification($ordersData));
+        Mail::to('prasetyo@ptmkm.co.id')->send(new MaintenanceOrderNotification($ordersData));
     }
 
     return redirect()->back()->with('status', 'Maintenance orders added successfully.');
