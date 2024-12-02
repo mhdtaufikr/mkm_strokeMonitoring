@@ -538,7 +538,8 @@ am5.ready(function() {
         renderer: am5xy.AxisRendererY.new(root, {
             cellStartLocation: 0.1,
             cellEndLocation: 0.9,
-            minorGridEnabled: true
+            minorGridEnabled: true,
+            inversed: true
         }),
         tooltip: am5.Tooltip.new(root, {})
     }));
