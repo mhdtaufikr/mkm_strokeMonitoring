@@ -194,8 +194,8 @@ public function storeRepair(Request $request)
         'end_time' => 'required',
         'status' => 'required|string|max:45',
         'signature' => 'required|string',
-        'img_before' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-        'img_after' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        'img_before' => 'nullable|image|mimes:jpeg,png,jpg|max:12048',
+        'img_after' => 'nullable|image|mimes:jpeg,png,jpg|max:122048',
     ]);
 
     try {
