@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\MstStrokeDies;
 use App\Models\MtcOrder;
+use App\Models\TaskList;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
@@ -110,10 +111,15 @@ class HomeController extends Controller
     ->orderBy('date', 'asc')
     ->get();
 
+       // Fetch all task list data where status is 'Open' and sort by dates close to now
+       $tasklists = TaskList::where('status', 'Open')
+       ->orderByRaw('ABS(TIMESTAMPDIFF(SECOND, start_date, NOW())) ASC') // Sort by closest start_date to now
+       ->orderByRaw('ABS(TIMESTAMPDIFF(SECOND, end_date, NOW())) ASC')   // Then sort by closest end_date to now
+       ->get();
 
     $distinctPartNames = MstStrokeDies::select('part_name')->distinct()->orderBy('part_name', 'asc')->pluck('part_name');
 
-    return view('home.index', compact('criticalData', 'hardWorkData', 'normalData','data','items','distinctPartNames'));
+    return view('home.index', compact('criticalData', 'hardWorkData', 'normalData','data','items','distinctPartNames','tasklists'));
 }
 
 

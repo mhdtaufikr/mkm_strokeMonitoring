@@ -330,45 +330,46 @@
                             <div id="normalChart" class="chartdiv"></div>
                             </div>
                             <div class="col-md-6">
-                                <h1>PM Dies</h1>
+                                <h1>Task List</h1>
                                 <!-- Table Container -->
-                                <table id="tableRepair" class="table table-bordered table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>Stroke Code</th>
-                                            <th>Stroke Process</th>
-                                            <th>Inventory Part No</th>
-                                            <th>Inventory Name</th>
-                                            <th>Standard Stroke</th>
-                                            <th>Total Actual Production</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($data as $item)
+                                <div class="table-responsive">
+                                    <table id="tableRepair" class="table table-bordered table-striped">
+                                        <thead>
                                             <tr>
-                                                <td>{{ $item->stroke_code }}</td>
-                                                <td>{{ $item->stroke_process }}</td>
-                                                <td>{{ $item->inventory_part_no }}</td>
-                                                <td>{{ $item->inventory_name }}</td>
-                                                <td>{{ $item->standard_stroke }}</td>
-                                                <td>{{ $item->total_actual_production }}</td>
-                                                <td>
-                                                    @php
-                                                        $difference = $item->standard_stroke - $item->total_actual_production;
-                                                    @endphp
-
-                                                    @if($item->total_actual_production > $item->reminder_stroke)
-                                                    <a href="{{ route('pm', ['id' => encrypt($item->stroke_id)]) }}" class="btn-reset" role="button">Reset</a>
-                                                    @endif
-
-                                                </td>
-
-
+                                                <th>No.</th>
+                                                <th>Name</th>
+                                                <th>Job</th>
+                                                <th>Description</th>
+                                                <th>Start</th>
+                                                <th>End (Estimate)</th>
+                                                <th>Status</th>
                                             </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody>
+                                            @php
+                                                $no = 1;
+                                            @endphp
+                                            @foreach ($tasklists as $task)
+                                                <tr>
+                                                    <td>{{ $no++ }}</td>
+                                                    <td><strong>{{ $task->name }}</strong></td>
+                                                    <td>{{ $task->job }}</td>
+                                                    <td>{{ $task->description }}</td>
+                                                    <td>{{ \Carbon\Carbon::parse($task->start_date)->format('d/m/Y') }}</td>
+                                                    <td>{{ \Carbon\Carbon::parse($task->end_date)->format('d/m/Y') }}</td>
+                                                    <td>
+                                                        @if ($task->status == 'Open')
+                                                            <span class="badge bg-warning text-dark">Open</span> <!-- Yellow badge for 'Open' -->
+                                                        @else
+                                                            <span class="badge bg-secondary">Close</span> <!-- Gray badge for 'Close' -->
+                                                        @endif
+                                                    </td>
+
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                             <div class="col-md-6">
                                 <h1>Repair Dies</h1>

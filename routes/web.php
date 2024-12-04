@@ -11,6 +11,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\StrokeController;
 use App\Http\Controllers\DiesController;
 use App\Http\Controllers\MtcOrderController;
+use App\Http\Controllers\TaskController;
 
 
 
@@ -104,8 +105,13 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/mtc-orders/store', [MtcOrderController::class, 'store'])->name('mtc_orders.store');
     Route::get('/get-process-by-code', [MtcOrderController::class, 'getProcessByCode']);
     Route::post('/maintenance-orders/store', [MtcOrderController::class, 'storeScan'])->name('mtc_orders.store.scan');
-
     Route::delete('mtc/order/{id}', [MtcOrderController::class, 'destroy'])->name('mtc.order.destroy');
+
+    /* Task List */
+    Route::get('/task', [TaskController::class, 'index']);
+    Route::post('/tasklist/store', [TaskController::class, 'store'])->name('tasklist.store');
+    Route::put('/tasklist/{id}', [TaskController::class, 'update'])->name('tasklist.update');
+    Route::delete('/tasklist/{id}', [TaskController::class, 'destroy'])->name('tasklist.destroy');
 
 
     });
