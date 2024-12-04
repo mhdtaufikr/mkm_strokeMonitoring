@@ -111,7 +111,7 @@
                                     <div class="tab-content" id="pmRepairTabsContent">
                                         <!-- PM Form Heads Tab -->
                                         <div class="tab-pane fade show active" id="pm" role="tabpanel" aria-labelledby="pm-tab">
-                                            <table id="tablepm" class="table table-bordered mt-3">
+                                            <table id="tablepm" class="table table-bordered table-striped mt-3">
                                                 <thead>
                                                     <tr>
                                                         <th>Dies</th>
@@ -143,7 +143,7 @@
 
                                         <!-- Repair Tab -->
                                         <div class="tab-pane fade" id="repair" role="tabpanel" aria-labelledby="repair-tab">
-                                            <table id="tableRepair" class="table table-bordered mt-3">
+                                            <table id="tableRepair" class="table table-bordered table-striped mt-3">
                                                 <thead>
                                                     <tr>
                                                         <th>Dies</th>
