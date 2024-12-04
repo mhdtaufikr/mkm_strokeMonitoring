@@ -386,7 +386,7 @@
                                                 <th>Problem</th>
                                                 <th>Next Production</th>
                                                 <th>Stock</th>
-                                                <th>Current Qty</th>
+                                                <th>Current Stroke</th>
                                                 <th>Image</th> <!-- New Image Column -->
                                                 <th>Status</th>
                                             </tr>
@@ -405,7 +405,7 @@
                                                 <td>{{ $data->pic }}</td>
                                                 <td>{{ $data->problem }}</td>
                                                 <td>{{ $data->date }}</td>
-                                                <td>{{$data->dies?->inventory?->qty ?? 0}}</td>
+                                                <td>{{$data->dies->inventory->qty ?? 0}}</td>
                                                 <td>{{ $data->dies->current_qty ?? 'N/A' }}</td>
                                                 <td>
                                                     @if ($data->img)
