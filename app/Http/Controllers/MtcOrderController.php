@@ -82,6 +82,17 @@ public function store(Request $request)
             ]);
         }
 
+        // Check if there's an ongoing maintenance order for this die
+        $ongoingOrder = MtcOrder::where('id_dies', $dies->id)
+            ->whereNull('status') // Check if status is null
+            ->exists();
+
+        if ($ongoingOrder) {
+            return redirect()->back()->withErrors([
+                "orders.$index.code" => "This die already has an ongoing maintenance order.",
+            ]);
+        }
+
         // Handle the image upload if it exists
         $imgPath = null;
         if (isset($order['img']) && $order['img']->isValid()) {
@@ -116,6 +127,7 @@ public function store(Request $request)
         ];
     }
 
+
     // Send email notification (optional)
     if (!empty($ordersData)) {
         Mail::to('prasetyo@ptmkm.co.id')->send(new MaintenanceOrderNotification($ordersData));
@@ -142,8 +154,21 @@ public function storeScan(Request $request)
         $imgPath = 'image/mtc_order/' . $fileName;
     }
 
+    // Retrieve the `MstStrokeDies` record based on `asset_no`
     $dies = MstStrokeDies::where('asset_no', $request->asset_no)->firstOrFail();
 
+    // Check if there's an ongoing maintenance order for this die
+    $ongoingOrder = MtcOrder::where('id_dies', $dies->id)
+        ->whereNull('status') // Check if status is null
+        ->exists();
+
+    if ($ongoingOrder) {
+        return redirect()->back()->withErrors([
+            'asset_no' => 'This die already has an ongoing maintenance order.',
+        ]);
+    }
+
+    // Create a new maintenance order
     $mtcOrder = MtcOrder::create([
         'id_dies' => $dies->id,
         'problem' => $request->problem,
@@ -168,11 +193,12 @@ public function storeScan(Request $request)
 
     // Send email notification (optional)
     if (!empty($ordersData)) {
-        Mail::to('muhammad.taufik@ptmkm.co.id')->send(new MaintenanceOrderNotification($ordersData));
+        Mail::to('prasetyo@ptmkm.co.id')->send(new MaintenanceOrderNotification($ordersData));
     }
 
     return redirect()->back()->with('status', 'Maintenance order submitted successfully.');
 }
+
 
 public function destroy($id)
 {

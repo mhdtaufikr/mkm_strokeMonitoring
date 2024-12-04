@@ -243,6 +243,19 @@ public function storeRepair(Request $request)
             // Update the status of the corresponding order in `mtc_orders`
             MtcOrder::where('id', $request->input('id_order'))->update(['status' => '1']);
         }
+        // Check if there are any orders with `status` = null for the given `id_dies`
+        $pendingOrder = MtcOrder::where('id_dies', $request->input('id_dies'))
+        ->whereNull('status')
+        ->first();
+
+        if ($pendingOrder) {
+            // Update the status of the first pending order to 1
+            $pendingOrder->update(['status' => '1']);
+
+            // Update the `id_order` field of the repair with the `id` of the pending order
+            $repair->id_order = $pendingOrder->id;
+        }
+
 
         $repair->save();
 
