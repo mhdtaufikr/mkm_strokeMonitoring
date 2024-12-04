@@ -146,7 +146,7 @@
                                             <table id="tableRepair" class="table table-bordered mt-3">
                                                 <thead>
                                                     <tr>
-
+                                                        <th>Dies</th>
                                                         <th>Date</th>
                                                         <th>PIC</th>
                                                         <th>Problem</th>
@@ -158,7 +158,11 @@
                                                 <tbody>
                                                     @foreach($repair as $repairRecord)
                                                         <tr>
-
+                                                            @if ($repairRecord->MstStrokeDies)
+                                                                <td>{{ $repairRecord->MstStrokeDies->code }} - {{ $repairRecord->MstStrokeDies->process }}</td>
+                                                            @else
+                                                                <td>Data not available</td>
+                                                            @endif
                                                             <td>{{ $repairRecord->date }}</td>
                                                             <td>{{ $repairRecord->pic }}</td>
                                                             <td>{{ $repairRecord->problem }}</td>

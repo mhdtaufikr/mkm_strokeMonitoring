@@ -25,7 +25,8 @@ class DiesController extends Controller
         $item = PmFormHead::with('MstStrokeDies')->get();
         $dies = MstStrokeDies::get();
         $pm = PmFormHead::with('MstStrokeDies')->orderBy('date', 'desc')->get();
-        $repair = Repair::orderBy('date', 'desc')->get();
+        $repair = Repair::with('MstStrokeDies')->orderBy('date', 'desc')->get();
+
 
         return view('dies.index',compact('item','dies','pm','repair'));
     }

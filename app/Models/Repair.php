@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Repair extends Model
 {
     use HasFactory;
+    public function MstStrokeDies()
+    {
+        return $this->belongsTo(MstStrokeDies::class, 'id_dies', 'id');
+    }
+
 }
