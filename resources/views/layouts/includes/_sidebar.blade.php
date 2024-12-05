@@ -30,11 +30,12 @@
          <div class="nav-link-icon"><i class="fas fa-pallet"></i></div>
          PM & Daily Report
      </a>
-     @if(\Auth::user()->role === 'Super Admin' || \Auth::user()->role === 'IT')
      <a class="nav-link" href="{{url('/task')}}">
         <div class="nav-link-icon"><i class="fas fa-tasks"></i></div>
         Task List
     </a>
+     @if(\Auth::user()->role === 'Super Admin' || \Auth::user()->role === 'IT')
+
      <a class="nav-link" href="{{url('/mtc/order')}}">
          <div class="nav-link-icon"><i class="fas fa-wrench"></i></div>
          Maintenance Order
