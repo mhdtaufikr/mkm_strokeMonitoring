@@ -157,23 +157,15 @@
                                                     <div id="maintenanceOrdersContainer">
                                                         <div class="maintenance-order-entry border rounded p-3 mb-3">
                                                             <div class="row g-3">
-                                                                <div class="col-md-4">
-                                                                    <!-- Code Dropdown -->
-                                                                    <label for="code" class="form-label">Code</label>
-                                                                    <select name="orders[0][code]" class="form-select code-select" required>
-                                                                        <option value="">Select Code</option>
-                                                                        @foreach($distinctCodes as $code)
-                                                                            <option value="{{ $code }}">{{ $code }}</option>
-                                                                        @endforeach
+                                                                <div class="col-md-8">
+                                                                    <!-- Combined Dropdown -->
+                                                                    <label for="machineSelect" class="form-label">Machine</label>
+                                                                    <select name="orders[0][machine]" id="machineSelect" class="form-control chosen-select" data-placeholder="Choose a dies..." required>
+                                                                        <option value="">Choose a dies...</option>
+                                                                        <!-- Options will be populated dynamically via JavaScript -->
                                                                     </select>
                                                                 </div>
-                                                                <div class="col-md-4">
-                                                                    <!-- Process Dropdown -->
-                                                                    <label for="process" class="form-label">Process</label>
-                                                                    <select name="orders[0][process]" class="form-select process-select" required>
-                                                                        <option value="">Select Process</option>
-                                                                    </select>
-                                                                </div>
+
                                                                 <div class="col-md-4">
                                                                     <!-- Date Input -->
                                                                     <label for="date" class="form-label">Next Production</label>
@@ -215,94 +207,60 @@
                                 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
     let orderIndex = 1;
+    const dies = @json($dies); // Include the necessary data for the dropdown
 
-    // Function to initialize event listener for Code dropdown
-    function initializeCodeSelect(codeSelect) {
-        codeSelect.addEventListener("change", function () {
-            const code = this.value;
-            const processSelect = this.closest(".maintenance-order-entry").querySelector(".process-select");
-
-            console.log("Code selected:", code); // Debug log for selected code
-            console.log("Process dropdown found:", processSelect); // Debug log for process dropdown
-
-            // Clear existing options
-            processSelect.innerHTML = '<option value="">Select Process</option>';
-            console.log("Cleared existing process options."); // Debug log for clearing options
-
-            if (code) {
-                fetch(`/get-process-by-code?code=${encodeURIComponent(code)}`)
-                    .then((response) => {
-                        console.log("Fetching processes for code:", code); // Debug log for fetch
-                        return response.json();
-                    })
-                    .then((data) => {
-                        console.log("Process data received:", data); // Debug log for received data
-                        data.forEach((item) => {
-                            const option = document.createElement("option");
-                            option.value = item.process;
-                            option.textContent = item.process;
-                            processSelect.appendChild(option);
-                        });
-                        console.log("Process dropdown populated successfully."); // Debug log for successful population
-                    })
-                    .catch((error) => {
-                        console.error("Error fetching processes:", error); // Error log for fetch
-                    });
-            }
+    // Function to populate options for a Chosen dropdown
+    function populateChosenOptions(selectElement) {
+        selectElement.empty(); // Clear existing options
+        selectElement.append('<option></option>'); // Add an empty placeholder
+        dies.forEach((die) => {
+            selectElement.append(
+                `<option value="${die.asset_no}">${die.code} (${die.process})</option>`
+            );
         });
+        selectElement.chosen({ width: "100%" }); // Initialize or reinitialize Chosen plugin
     }
 
-    // Initialize event listener for the first row
-    const initialCodeSelect = document.querySelector(".maintenance-order-entry .code-select");
-    if (initialCodeSelect) {
-        console.log("Initializing Code dropdown for the first row."); // Debug log for first row initialization
-        initializeCodeSelect(initialCodeSelect);
-    } else {
-        console.error("First row Code dropdown not found."); // Error log if first row dropdown is missing
-    }
+    // Initialize Chosen for the first dropdown in the modal
+    const initialChosen = $("#machineSelect");
+    populateChosenOptions(initialChosen);
 
-    // Function to add a new maintenance order entry
+    // Reinitialize Chosen when the modal is opened
+    $("#addMaintenanceOrderModal").on("shown.bs.modal", function () {
+        initialChosen.trigger("chosen:updated");
+    });
+
+    // Add new maintenance order entry
     document.getElementById("addMaintenanceOrder").addEventListener("click", function () {
         const container = document.getElementById("maintenanceOrdersContainer");
 
-        console.log("Adding new maintenance order entry."); // Debug log for adding new row
-
-        // Create a new entry div with proper layout
+        // Create a new maintenance order entry
         const newEntry = document.createElement("div");
         newEntry.classList.add("maintenance-order-entry", "border", "rounded", "p-3", "mb-3");
         newEntry.innerHTML = `
             <div class="row g-3">
-                <div class="col-md-4">
-                    <label class="form-label">Code</label>
-                    <select name="orders[${orderIndex}][code]" class="form-select code-select" required>
-                        <option value="">Select Code</option>
-                        @foreach($distinctCodes as $code)
-                            <option value="{{ $code }}">{{ $code }}</option>
-                        @endforeach
+                <div class="col-md-8">
+                    <label for="machineSelect" class="form-label">Machine</label>
+                    <select name="orders[${orderIndex}][machine]" class="form-control chosen-select" data-placeholder="Choose a dies..." required>
+                        <option value="">Choose a dies...</option>
                     </select>
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label">Process</label>
-                    <select name="orders[${orderIndex}][process]" class="form-select process-select" required>
-                        <option value="">Select Process</option>
-                    </select>
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label">Next Production</label>
+                    <label for="date" class="form-label">Next Production</label>
                     <input type="date" name="orders[${orderIndex}][date]" class="form-control" required>
                 </div>
                 <div class="col-md-6">
-                    <label class="form-label">Problem</label>
+                    <label for="problem" class="form-label">Problem</label>
                     <input type="text" name="orders[${orderIndex}][problem]" class="form-control" required>
                 </div>
                 <div class="col-md-6">
-                    <label class="form-label">Upload Image</label>
+                    <label for="img" class="form-label">Upload Image</label>
                     <input type="file" name="orders[${orderIndex}][img]" class="form-control" accept="image/*">
                 </div>
                 <div class="col-md-6">
-                    <label class="form-label">pic</label>
+                    <label for="pic" class="form-label">pic</label>
                     <input type="text" name="orders[${orderIndex}][pic]" class="form-control" required>
                 </div>
                 <div class="col-md-6 d-flex align-items-center">
@@ -312,20 +270,16 @@
         `;
         container.appendChild(newEntry);
 
-        console.log("New maintenance order entry added."); // Debug log for successful row addition
-
-        // Add event listener to the new code-select
-        const newCodeSelect = newEntry.querySelector(".code-select");
-        console.log("Initializing Code dropdown for new row."); // Debug log for new row dropdown initialization
-        initializeCodeSelect(newCodeSelect);
+        // Populate and initialize Chosen for the new dropdown
+        const newSelect = $(newEntry).find(".chosen-select");
+        populateChosenOptions(newSelect);
 
         orderIndex++;
     });
 
-    // Function to remove an entry
+    // Remove an entry
     document.getElementById("maintenanceOrdersContainer").addEventListener("click", function (e) {
         if (e.target.classList.contains("remove-entry")) {
-            console.log("Removing a maintenance order entry."); // Debug log for row removal
             e.target.closest(".maintenance-order-entry").remove();
         }
     });

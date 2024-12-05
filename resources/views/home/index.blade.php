@@ -349,10 +349,9 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @php $no = 1; @endphp
-                                                    @foreach ($tasklists->slice(0, 10) as $task) <!-- First 10 rows -->
+                                                    @foreach ($tasklists->slice(0, 10) as $index => $task) <!-- First 10 rows -->
                                                         <tr>
-                                                            <td>{{ $no++ }}</td>
+                                                            <td>{{ $index + 1 }}</td>
                                                             <td><strong>{{ $task->name }}</strong></td>
                                                             <td>{{ $task->job }}</td>
                                                             <td>{{ $task->description }}</td>
@@ -388,10 +387,9 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @php $no = 11; @endphp
-                                                    @foreach ($tasklists->slice(10) as $task) <!-- Remaining rows -->
+                                                    @foreach ($tasklists->slice(10)->values() as $index => $task) <!-- Remaining rows -->
                                                         <tr>
-                                                            <td>{{ $no++ }}</td>
+                                                            <td>{{ $index + 11 }}</td>
                                                             <td><strong>{{ $task->name }}</strong></td>
                                                             <td>{{ $task->job }}</td>
                                                             <td>{{ $task->description }}</td>
@@ -411,20 +409,19 @@
                                         </div>
                                     </div>
                                 </div>
+
                                 <script>
                                     $(document).ready(function() {
                                         $("#tableRepair1").DataTable({
                                             "responsive": true,
                                             "lengthChange": false,
                                             "autoWidth": false,
-                                            "order": [[5, "asc"]],
                                         });
 
                                         $("#tableRepair2").DataTable({
                                             "responsive": true,
                                             "lengthChange": false,
                                             "autoWidth": false,
-                                            "order": [[5, "asc"]],
                                         });
                                     });
                                 </script>

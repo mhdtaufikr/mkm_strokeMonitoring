@@ -25,13 +25,12 @@ class MtcOrderController extends Controller
         ", [$currentDate, $currentDate])
         ->orderBy('date', 'asc')
         ->get();
+
     $distinctPartNames = MstStrokeDies::select('part_name')->distinct()->orderBy('part_name', 'asc')->pluck('part_name');
-    $dies = MstStrokeDies::get();
+    $dies = MstStrokeDies::select('code', 'process', 'asset_no', 'part_name')->get(); // Include necessary columns
+    $distinctCodes = MstStrokeDies::select('code')->distinct()->pluck('code');
 
-$distinctCodes = MstStrokeDies::select('code')->distinct()->pluck('code');
-
-
-    return view('order.index', compact('items', 'distinctPartNames','dies','distinctCodes'));
+    return view('order.index', compact('items', 'distinctPartNames', 'dies', 'distinctCodes'));
 }
 
 
@@ -59,8 +58,6 @@ public function store(Request $request)
 
     // Validate incoming request data
     $request->validate([
-        'orders.*.code' => 'required',
-        'orders.*.process' => 'required',
         'orders.*.problem' => 'required',
         'orders.*.date' => 'required|date',
         'orders.*.pic' => 'required|string',
@@ -72,10 +69,8 @@ public function store(Request $request)
     foreach ($request->orders as $index => $order) {
 
         // Retrieve the related `MstStrokeDies` record based on selected `code` and `process`
-        $dies = MstStrokeDies::where('code', $order['code'])
-            ->where('process', $order['process'])
+        $dies = MstStrokeDies::where('asset_no', $order['machine'])
             ->first();
-
         if (!$dies) {
             return redirect()->back()->withErrors([
                 "orders.$index.code" => "Invalid code or process combination.",
@@ -115,9 +110,9 @@ public function store(Request $request)
         // Collect order data for email
         $ordersData[] = [
             'part_name' => $dies->part_name,
-            'code' => $order['code'],
+            'code' => $dies->code,
             'code_process' => "{$dies->code} - {$dies->process}",
-            'process' => $order['process'],
+            'process' => $dies->process,
             'problem' => $order['problem'],
             'date' => $order['date'],
             'pic' => $order['pic'],

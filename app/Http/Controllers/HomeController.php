@@ -113,33 +113,27 @@ class HomeController extends Controller
 // Fetch all names from the dropdowns table where category is 'Names'
 $names = DB::table('dropdowns')->where('category', 'Names')->pluck('name_value');
 
-// Fetch the latest task list entry for each person, regardless of status
-$latestTasks = TaskList::select('name', DB::raw('MAX(created_at) as latest_date'))
-    ->groupBy('name')
-    ->get()
-    ->keyBy('name'); // Index by name for easy lookup
-
 // Map names to tasks, adding default values if no task is found
-$tasklists = $names->map(function ($name) use ($latestTasks) {
-    $task = $latestTasks->get($name); // Get the latest task for this name
+$tasklists = $names->map(function ($name) {
+    // Fetch the latest task for the name
+    $task = TaskList::where('name', $name)->latest('created_at')->first();
 
     if ($task) {
-        // Fetch full details for the latest task
-        return TaskList::where('name', $name)
-            ->where('created_at', $task->latest_date)
-            ->first();
+        // Return the task if it exists
+        return $task;
     }
 
-    // Default value when no task is found
+    // Return default values if no task is found
     return (object) [
         'name' => $name,
         'job' => 'No Job Assigned',
         'description' => 'No Description Available',
         'start_date' => null,
         'end_date' => null,
-        'status' => 'No Status'
+        'status' => 'No Status',
     ];
 });
+
 
 // Fetch distinct part names for dropdown
 $distinctPartNames = MstStrokeDies::select('part_name')
