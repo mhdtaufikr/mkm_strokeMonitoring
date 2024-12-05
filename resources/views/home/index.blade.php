@@ -78,7 +78,8 @@
             <div class="container-fluid px-4 mt-n10">
                 <div class="card">
                     <div class="card-header">
-                        <h1 style="color: white">Stroke Monitoring</h1>
+                        <h1 style="color: white">Stroke Monitoring  ({{ \Carbon\Carbon::now()->format('F j, Y') }})</h1>
+
                     </div>
                     <div class="card-body">
                         <div class="row">
