@@ -19,7 +19,7 @@
 
     .chartdiv {
         width: 100%;
-        height: 500px;
+        height: 1000px;
         margin-bottom: 50px;
     }
 
@@ -85,7 +85,7 @@
                             <div class="col-md-3">
                                 <h1>Critical Work Dies</h1>
                                 <!-- Critical Chart -->
-                                <div id="criticalChart" style="width: 100%; height: 500px;"></div>
+                                <div id="criticalChart" style="width: 100%; height: 1000px;"></div>
                                 <script>
                                     // Prepare Critical Chart Data
                                     var criticalData = @json($criticalData).map(function(item) {
@@ -201,7 +201,7 @@
                             <div class="col-md-5">
                                 <h1>Hard Work Dies</h1>
                                 <!-- Hard Work Chart -->
-                                <div id="hardWorkChart" style="width: 100%; height: 500px;"></div>
+                                <div id="hardWorkChart" style="width: 100%; height: 1000px;"></div>
                                 <script>
                                     // Prepare Hard Work Chart Data
                                     var hardWorkData = @json($hardWorkData).map(function(item) {
