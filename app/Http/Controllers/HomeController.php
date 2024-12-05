@@ -110,16 +110,44 @@ class HomeController extends Controller
     ", [$currentDate, $currentDate])
     ->orderBy('date', 'asc')
     ->get();
+// Fetch all names from the dropdowns table where category is 'Names'
+$names = DB::table('dropdowns')->where('category', 'Names')->pluck('name_value');
 
-       // Fetch all task list data where status is 'Open' and sort by dates close to now
-       $tasklists = TaskList::where('status', 'Open')
-       ->orderByRaw('ABS(TIMESTAMPDIFF(SECOND, start_date, NOW())) ASC') // Sort by closest start_date to now
-       ->orderByRaw('ABS(TIMESTAMPDIFF(SECOND, end_date, NOW())) ASC')   // Then sort by closest end_date to now
-       ->get();
+// Fetch the latest task list entry for each person, regardless of status
+$latestTasks = TaskList::select('name', DB::raw('MAX(created_at) as latest_date'))
+    ->groupBy('name')
+    ->get()
+    ->keyBy('name'); // Index by name for easy lookup
 
-    $distinctPartNames = MstStrokeDies::select('part_name')->distinct()->orderBy('part_name', 'asc')->pluck('part_name');
+// Map names to tasks, adding default values if no task is found
+$tasklists = $names->map(function ($name) use ($latestTasks) {
+    $task = $latestTasks->get($name); // Get the latest task for this name
 
-    return view('home.index', compact('criticalData', 'hardWorkData', 'normalData','data','items','distinctPartNames','tasklists'));
+    if ($task) {
+        // Fetch full details for the latest task
+        return TaskList::where('name', $name)
+            ->where('created_at', $task->latest_date)
+            ->first();
+    }
+
+    // Default value when no task is found
+    return (object) [
+        'name' => $name,
+        'job' => 'No Job Assigned',
+        'description' => 'No Description Available',
+        'start_date' => null,
+        'end_date' => null,
+        'status' => 'No Status'
+    ];
+});
+
+// Fetch distinct part names for dropdown
+$distinctPartNames = MstStrokeDies::select('part_name')
+    ->distinct()
+    ->orderBy('part_name', 'asc')
+    ->pluck('part_name');
+
+return view('home.index', compact('criticalData', 'hardWorkData', 'normalData', 'data', 'items', 'distinctPartNames', 'tasklists'));
 }
 
 

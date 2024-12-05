@@ -329,49 +329,108 @@
                             <h1>Normal Work Dies</h1>
                             <div id="normalChart" class="chartdiv"></div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-7">
                                 <h1>Task List</h1>
                                 <!-- Table Container -->
-                                <div class="table-responsive">
-                                    <table id="tableRepair" class="table table-bordered table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th>No.</th>
-                                                <th>Name</th>
-                                                <th>Job</th>
-                                                <th>Description</th>
-                                                <th>Start</th>
-                                                <th>End (Estimate)</th>
-                                                <th>Status</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @php
-                                                $no = 1;
-                                            @endphp
-                                            @foreach ($tasklists as $task)
-                                                <tr>
-                                                    <td>{{ $no++ }}</td>
-                                                    <td><strong>{{ $task->name }}</strong></td>
-                                                    <td>{{ $task->job }}</td>
-                                                    <td>{{ $task->description }}</td>
-                                                    <td>{{ \Carbon\Carbon::parse($task->start_date)->format('d/m/Y') }}</td>
-                                                    <td>{{ \Carbon\Carbon::parse($task->end_date)->format('d/m/Y') }}</td>
-                                                    <td>
-                                                        @if ($task->status == 'Open')
-                                                            <span class="badge bg-warning text-dark">Open</span> <!-- Yellow badge for 'Open' -->
-                                                        @else
-                                                            <span class="badge bg-secondary">Close</span> <!-- Gray badge for 'Close' -->
-                                                        @endif
-                                                    </td>
+                                <div class="row">
+                                    <!-- Table 1 -->
+                                    <div class="col-md-6">
+                                        <div class="table-responsive">
+                                            <table id="tableRepair1" class="table table-bordered table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th>No.</th>
+                                                        <th>Name</th>
+                                                        <th>Job</th>
+                                                        <th>Description</th>
+                                                        <th>Start</th>
+                                                        <th>End (Estimate)</th>
+                                                        <th>Status</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @php $no = 1; @endphp
+                                                    @foreach ($tasklists->slice(0, 10) as $task) <!-- First 10 rows -->
+                                                        <tr>
+                                                            <td>{{ $no++ }}</td>
+                                                            <td><strong>{{ $task->name }}</strong></td>
+                                                            <td>{{ $task->job }}</td>
+                                                            <td>{{ $task->description }}</td>
+                                                            <td>{{ $task->start_date ? \Carbon\Carbon::parse($task->start_date)->format('d/m/Y') : 'N/A' }}</td>
+                                                            <td>{{ $task->end_date ? \Carbon\Carbon::parse($task->end_date)->format('d/m/Y') : 'N/A' }}</td>
+                                                            <td>
+                                                                @if ($task->status === 'Open')
+                                                                    <span class="badge bg-warning text-dark">Open</span>
+                                                                @else
+                                                                    <span class="badge bg-success">Close</span>
+                                                                @endif
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
 
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
+                                    <!-- Table 2 -->
+                                    <div class="col-md-6">
+                                        <div class="table-responsive">
+                                            <table id="tableRepair2" class="table table-bordered table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th>No.</th>
+                                                        <th>Name</th>
+                                                        <th>Job</th>
+                                                        <th>Description</th>
+                                                        <th>Start</th>
+                                                        <th>End (Estimate)</th>
+                                                        <th>Status</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @php $no = 11; @endphp
+                                                    @foreach ($tasklists->slice(10) as $task) <!-- Remaining rows -->
+                                                        <tr>
+                                                            <td>{{ $no++ }}</td>
+                                                            <td><strong>{{ $task->name }}</strong></td>
+                                                            <td>{{ $task->job }}</td>
+                                                            <td>{{ $task->description }}</td>
+                                                            <td>{{ $task->start_date ? \Carbon\Carbon::parse($task->start_date)->format('d/m/Y') : 'N/A' }}</td>
+                                                            <td>{{ $task->end_date ? \Carbon\Carbon::parse($task->end_date)->format('d/m/Y') : 'N/A' }}</td>
+                                                            <td>
+                                                                @if ($task->status === 'Open')
+                                                                    <span class="badge bg-warning text-dark">Open</span>
+                                                                @else
+                                                                    <span class="badge bg-success">Close</span>
+                                                                @endif
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
                                 </div>
+                                <script>
+                                    $(document).ready(function() {
+                                        $("#tableRepair1").DataTable({
+                                            "responsive": true,
+                                            "lengthChange": false,
+                                            "autoWidth": false,
+                                            "order": [[5, "asc"]],
+                                        });
+
+                                        $("#tableRepair2").DataTable({
+                                            "responsive": true,
+                                            "lengthChange": false,
+                                            "autoWidth": false,
+                                            "order": [[5, "asc"]],
+                                        });
+                                    });
+                                </script>
+
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-5">
                                 <h1>Repair Dies</h1>
                                 <div class="table-responsive">
                                     <table id="tableInventory" class="table table-bordered table-striped">
@@ -671,16 +730,7 @@ am5.ready(function() {
         });
     });
 </script>
-<script>
-    $(document).ready(function() {
-        var table = $("#tableRepair").DataTable({
-            "responsive": true,
-            "lengthChange": false,
-            "autoWidth": false,
-            "order": [[5, "asc"]],
-        });
-    });
-</script>
+
     <script>
         function refreshPage() {
             setTimeout(function() {
