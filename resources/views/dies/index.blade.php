@@ -268,24 +268,21 @@
 
                             <script>
                                 $(document).ready(function() {
-                                  var table = $("#tablepm").DataTable({
-                                    "responsive": true,
-                                    "lengthChange": false,
-                                    "autoWidth": false,
-                                    // "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-                                  });
+                                    $('#tablepm').DataTable({
+                                        "ordering": false, // Matikan sorting client-side
+                                        "pageLength": 10 // Jumlah data per halaman
+                                    });
                                 });
-                              </script>
-                              <script>
+                            </script>
+
+                            <script>
                                 $(document).ready(function() {
-                                  var table = $("#tableRepair").DataTable({
-                                    "responsive": true,
-                                    "lengthChange": false,
-                                    "autoWidth": false,
-                                    // "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-                                  });
+                                    $('#tableRepair').DataTable({
+                                        "ordering": false, // Matikan sorting client-side
+                                        "pageLength": 10 // Jumlah data per halaman
+                                    });
                                 });
-                              </script>
+                            </script>
                             <!-- /.card -->
 
                             {{-- <div class="card mt-4">
