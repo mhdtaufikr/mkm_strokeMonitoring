@@ -207,5 +207,38 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+              <!-- Loader Spinner -->
+              <div id="loader" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.8); z-index: 9999; align-items: center; justify-content: center;">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+            <style>
+                #loader {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            </style>
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    document.getElementById("loader").style.display = "none"; // Hide loader once content is ready
+
+                    // Show loader on AJAX start
+                    $(document).on("ajaxStart", function () {
+                        document.getElementById("loader").style.display = "flex";
+                    });
+
+                    // Hide loader on AJAX stop
+                    $(document).on("ajaxStop", function () {
+                        document.getElementById("loader").style.display = "none";
+                    });
+                });
+
+                // Show loader when navigating away from the page
+                window.addEventListener("beforeunload", function () {
+                    document.getElementById("loader").style.display = "flex";
+                });
+            </script>
 
 </html>
