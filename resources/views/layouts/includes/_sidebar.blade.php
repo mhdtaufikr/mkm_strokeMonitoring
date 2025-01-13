@@ -26,6 +26,11 @@
          Home
      </a>
 
+     <a class="nav-link" href="{{ url('/dashboard') }}">
+        <div class="nav-link-icon"><i class="fas fa-chart-line"></i></div>
+        Dashboard
+    </a>
+
      <a class="nav-link" href="{{url('/dies/list')}}">
          <div class="nav-link-icon"><i class="fas fa-pallet"></i></div>
          PM & Daily Report

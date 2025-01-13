@@ -159,6 +159,35 @@ public function resetQty($strokeId)
     return redirect()->route('home')->with('success', 'Quantity reset successfully.');
 }
 
+public function dashboard()
+{
+    $year = now()->year; // Ambil tahun saat ini
 
+    $topRepairs = DB::table('repairs')
+    ->join('mst_strokedies', 'repairs.id_dies', '=', 'mst_strokedies.id')
+    ->select(
+        'mst_strokedies.code',          // Include code
+        DB::raw('COUNT(repairs.id) as total_repairs') // Total repairs count
+    )
+    ->groupBy('mst_strokedies.code')   // Group by code only
+    ->orderByDesc('total_repairs')
+    ->limit(10)
+    ->get();
+    // **Query: Top 10 MTTR**
+    $topMTTR = DB::table('repair_summary_accumulated')
+    ->select('code', DB::raw('MAX(mttr_value) as mttr_value'), DB::raw('SUM(problem_count) as problem_count'), DB::raw('SUM(total_repair_time) as total_repair_time'))
+    ->groupBy('code') // Group by code to avoid duplicates
+    ->orderByDesc('mttr_value') // Sort by highest MTTR
+    ->limit(10) // Limit to top 10
+    ->get();
+
+
+    // **Return ke View**
+    return view('home.dashboard', [
+        'year' => $year,              // Tahun saat ini
+        'topRepairs' => $topRepairs,  // Data Dies yang paling banyak diperbaiki
+        'topMTTR' => $topMTTR,        // Data Dies dengan MTTR tertinggi
+    ]);
+}
 
 }
